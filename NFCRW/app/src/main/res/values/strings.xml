@@ -1,0 +1,18 @@
+<?xml version="1.0" encoding="utf-8"?>
+<resources>
+
+    <string name="app_name">NFC R/W with Admin Mode</string>
+    <string name="hello_world">Hello world!</string>
+    <string name="action_settings">Settings</string>
+    <string name="title_activity_triage">TriageActivity</string>
+    <string name="title_activity_admin">AdminActivity</string>
+    <string name="string_adminInstructions">Write tag ID then bring tag to device</string>
+    <string name="string_readMode">Read Mode (Press to switch to write mode)</string>
+    <string name="string_writeMode">Write Mode (Press to switch to read mode)</string>
+    <string name="string_tagID">Tag ID:</string>
+    <string name="error_detected">TAG NOT DETECTED. WHERE DO YOU WANT WRITE!?!?</string>
+    <string name="ok_writing">Write successful</string>
+    <string name="error_writing">ERROR DURING WRITING. ARE YOU SURE THAT YOUR TAG IS CLOSE TO YOUR MOBILE PHONE?</string>
+    <string name="ok_detection">Tag detected. Press to write.</string>
+
+</resources>

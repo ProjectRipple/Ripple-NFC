@@ -1,0 +1,23 @@
+<?xml version="1.0" encoding="utf-8"?>
+<pre-dex-items>
+
+    <item
+        dex="C:\Users\lucas_000\GitProjects\RippleNFC\NFCRW\app\build\intermediates\pre-dexed\debug\support-v4-19.1.0-a2a96d610a8661865224981b97f5717a312d937b.jar"
+        jar="D:\Documents\AndroidStudio\sdk\extras\android\m2repository\com\android\support\support-v4\19.1.0\support-v4-19.1.0.jar"
+        jumboMode="false"
+        revision="19.1.0"
+        sha1="85f201b380937e61a9dce6ca90ccf6872abbfb67"/>
+    <item
+        dex="C:\Users\lucas_000\GitProjects\RippleNFC\NFCRW\app\build\intermediates\pre-dexed\debug\msgpack-0.6.12-SNAPSHOT-c9783d96d05844d6a1726dcaa930b93ccf3a6aff.jar"
+        jar="C:\Users\lucas_000\GitProjects\RippleNFC\NFCRW\app\libs\msgpack-0.6.12-SNAPSHOT.jar"
+        jumboMode="false"
+        revision="19.1.0"
+        sha1="4c55c66c6aa22ddc860f1de0022844c225551aae"/>
+    <item
+        dex="C:\Users\lucas_000\GitProjects\RippleNFC\NFCRW\app\build\intermediates\pre-dexed\debug\classes-c0545769d25fe1bed3da59ca50d42b449046da73.jar"
+        jar="C:\Users\lucas_000\GitProjects\RippleNFC\NFCRW\build\intermediates\exploded-aar\com.android.support\appcompat-v7\19.1.0\classes.jar"
+        jumboMode="false"
+        revision="19.1.0"
+        sha1="3499ceba05ca1f6037c6a2fad73df8f636224a28"/>
+
+</pre-dex-items>
