@@ -85,22 +85,26 @@
                 android:layout_width="wrap_content"
                 android:layout_height="wrap_content"
                 android:textSize="20sp"
-                android:id="@+id/et_table1_row1_time"/>
+                android:id="@+id/et_table1_row1_time"
+                android:inputType="time"/>
             <EditText
                 android:layout_width="wrap_content"
                 android:layout_height="wrap_content"
                 android:textSize="20sp"
-                android:id="@+id/et_table1_row1_bp"/>
+                android:id="@+id/et_table1_row1_bp"
+                android:inputType="text"/>
             <EditText
                 android:layout_width="wrap_content"
                 android:layout_height="wrap_content"
                 android:textSize="20sp"
-                android:id="@+id/et_table1_row1_pulse"/>
+                android:id="@+id/et_table1_row1_pulse"
+                android:inputType="number"/>
             <EditText
                 android:layout_width="wrap_content"
                 android:layout_height="wrap_content"
                 android:textSize="20sp"
-                android:id="@+id/et_table1_row1_respiration"/>
+                android:id="@+id/et_table1_row1_respiration"
+                android:inputType="number"/>
         </TableRow>
 
     </TableLayout>
@@ -153,8 +157,9 @@
                 android:layout_height="wrap_content"
                 android:textSize="20sp"
                 android:layout_weight="1"
-                android:id="@+id/et_table2_row1_time"/>
-            <EditText
+                android:id="@+id/et_table2_row1_time"
+                android:inputType="time"/>
+            <AutoCompleteTextView
                 android:layout_width="wrap_content"
                 android:layout_height="wrap_content"
                 android:textSize="20sp"
@@ -165,7 +170,8 @@
                 android:layout_height="wrap_content"
                 android:textSize="20sp"
                 android:layout_weight="1"
-                android:id="@+id/et_table2_row1_dose"/>
+                android:id="@+id/et_table2_row1_dose"
+                android:inputType="number"/>
             <EditText
                 android:layout_width="wrap_content"
                 android:layout_height="wrap_content"

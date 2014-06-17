@@ -17,6 +17,8 @@ import android.util.Log;
 import android.view.Menu;
 import android.view.MenuItem;
 import android.view.View;
+import android.widget.ArrayAdapter;
+import android.widget.AutoCompleteTextView;
 import android.widget.Button;
 import android.widget.TableLayout;
 import android.widget.TableRow;
@@ -74,7 +76,7 @@ public class TriageActivity extends Activity {
     TableLayout table2;
     TableRow table2Row1;
     TextView table2Row1Time;
-    TextView table2Row1DS;
+    AutoCompleteTextView table2Row1DS;
     TextView table2Row1Dose;
     TextView table2Row1Other;
 
@@ -142,7 +144,7 @@ public class TriageActivity extends Activity {
         table1Row1Respiration = (TextView) findViewById(R.id.et_table1_row1_respiration);
 
         table2Row1Time = (TextView) findViewById(R.id.et_table2_row1_time);
-        table2Row1DS = (TextView) findViewById(R.id.et_table2_row1_ds);
+        table2Row1DS = (AutoCompleteTextView) findViewById(R.id.et_table2_row1_ds);
         table2Row1Dose = (TextView) findViewById(R.id.et_table2_row1_dose);
         table2Row1Other = (TextView) findViewById(R.id.et_table2_row1_other);
 
@@ -197,6 +199,19 @@ public class TriageActivity extends Activity {
         IntentFilter tagDetected = new IntentFilter(NfcAdapter.ACTION_TAG_DISCOVERED);
         tagDetected.addCategory(Intent.CATEGORY_DEFAULT);
         writeTagFilters = new IntentFilter[] { tagDetected };
+
+        DataBaseHelper dataBaseHelper = new DataBaseHelper(ctx);
+        try {
+            dataBaseHelper.createDataBase();
+            dataBaseHelper.openDataBase();
+        } catch (Exception e) {
+            e.printStackTrace();
+        }
+        String[] substances = dataBaseHelper.getColumn("SUBSTANCENAME");
+
+        ArrayAdapter<String> adapter = new ArrayAdapter<String>(this, android.R.layout.simple_list_item_1, substances);
+        table2Row1DS.setAdapter(adapter);
+        table2Row1DS.setThreshold(3);
     }
 
     //reads the message contained on the tag

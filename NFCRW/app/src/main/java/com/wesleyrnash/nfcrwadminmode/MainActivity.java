@@ -3,23 +3,27 @@ package com.wesleyrnash.nfcrwadminmode;
 import android.app.Activity;
 import android.content.Context;
 import android.content.Intent;
-import android.support.v7.app.ActionBarActivity;
-import android.support.v7.app.ActionBar;
-import android.support.v4.app.Fragment;
+import android.database.Cursor;
 import android.os.Bundle;
+import android.util.Log;
 import android.view.LayoutInflater;
 import android.view.Menu;
 import android.view.MenuItem;
 import android.view.View;
 import android.view.ViewGroup;
 import android.os.Build;
+import android.widget.ArrayAdapter;
+import android.widget.AutoCompleteTextView;
 import android.widget.Button;
+import android.widget.Toast;
 
 public class MainActivity extends Activity {
 
     Button triageButton;
     Button adminButton;
     Context ctx;
+
+    public static final String TAG = "NFCRW";
 
     @Override
     protected void onCreate(Bundle savedInstanceState) {
@@ -30,7 +34,6 @@ public class MainActivity extends Activity {
 
         triageButton = (Button) findViewById(R.id.button_triageMode);
         adminButton = (Button) findViewById(R.id.button_adminMode);
-
 
         triageButton.setOnClickListener(new View.OnClickListener() {
             @Override

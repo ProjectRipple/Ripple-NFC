@@ -7,9 +7,9 @@
         <option name="externalProjectPath" value="$PROJECT_DIR$" />
         <option name="modules">
           <set>
-            <option value="$PROJECT_DIR$" />
-            <option value="$PROJECT_DIR$/MessagePack" />
-            <option value="$PROJECT_DIR$/app" />
+            <option value="C:\Users\Wesley\Ripple-NFC\NFCRW" />
+            <option value="C:\Users\Wesley\Ripple-NFC\NFCRW\MessagePack" />
+            <option value="C:\Users\Wesley\Ripple-NFC\NFCRW\app" />
           </set>
         </option>
       </GradleProjectSettings>
