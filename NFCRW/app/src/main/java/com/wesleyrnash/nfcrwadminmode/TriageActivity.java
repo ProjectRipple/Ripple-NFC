@@ -11,7 +11,9 @@ import android.nfc.NdefRecord;
 import android.nfc.NfcAdapter;
 import android.nfc.Tag;
 import android.nfc.tech.Ndef;
+import android.os.AsyncTask;
 import android.os.Bundle;
+import android.provider.ContactsContract;
 import android.util.Base64;
 import android.util.Log;
 import android.view.Menu;
@@ -100,6 +102,8 @@ public class TriageActivity extends Activity {
     MessagePack msgPack;
     Template<Map<String, String>> mapTemplate;
     Map<String, String> map;
+
+    ArrayAdapter<String> stringAdapter;
 
     @Override
     protected void onCreate(Bundle savedInstanceState) {
@@ -207,11 +211,13 @@ public class TriageActivity extends Activity {
         } catch (Exception e) {
             e.printStackTrace();
         }
-        String[] substances = dataBaseHelper.getColumn("SUBSTANCENAME");
 
-        ArrayAdapter<String> adapter = new ArrayAdapter<String>(this, android.R.layout.simple_list_item_1, substances);
-        table2Row1DS.setAdapter(adapter);
-        table2Row1DS.setThreshold(3);
+        new CreateStringArray().execute(dataBaseHelper);
+        //String[] substances = dataBaseHelper.getColumn("SUBSTANCENAME");
+
+//        adapter = new ArrayAdapter<String>(this, android.R.layout.simple_list_item_1, substances);
+//        table2Row1DS.setAdapter(adapter);
+//        table2Row1DS.setThreshold(3);
     }
 
     //reads the message contained on the tag
@@ -412,5 +418,28 @@ public class TriageActivity extends Activity {
             return true;
         }
         return super.onOptionsItemSelected(item);
+    }
+
+    private class CreateStringArray extends AsyncTask<DataBaseHelper, Void, String[]> {
+
+        @Override
+        protected void onPreExecute() {
+            super.onPreExecute();
+            Log.d(TAG, "Started loading string array");
+        }
+
+        @Override
+        protected String[] doInBackground(DataBaseHelper... params) {
+            DataBaseHelper dataBaseHelper = params[0];
+            return dataBaseHelper.getColumn("SUBSTANCENAME");
+        }
+
+        protected void onPostExecute(String[] result) {
+            Log.d(TAG, "Done loading string array");
+            stringAdapter = new ArrayAdapter<String>(ctx, android.R.layout.simple_list_item_1, result);
+            table2Row1DS.setAdapter(stringAdapter);
+            table2Row1DS.setThreshold(3);
+        }
+
     }
 }

@@ -5,6 +5,7 @@ import android.database.Cursor;
 import android.database.sqlite.SQLiteDatabase;
 import android.database.sqlite.SQLiteException;
 import android.database.sqlite.SQLiteOpenHelper;
+import android.util.Log;
 
 import java.io.FileOutputStream;
 import java.io.IOException;
@@ -33,6 +34,8 @@ public class DataBaseHelper extends SQLiteOpenHelper {
 
     private final Context myContext;
 
+    public static final String TAG = "NFCRW";
+
     /**
      * Constructor
      * Takes and keeps a reference of the passed context in order to access to the application assets and resources.
@@ -42,6 +45,7 @@ public class DataBaseHelper extends SQLiteOpenHelper {
 
         super(context, DB_NAME, null, 1);
         this.myContext = context;
+        Log.d(TAG, "In DBHelper constructor");
     }
 
     /**
@@ -52,8 +56,10 @@ public class DataBaseHelper extends SQLiteOpenHelper {
         boolean dbExist = checkDataBase();
 
         if(dbExist){
+            Log.d(TAG, "Database already exists");
             //do nothing - database already exist
         }else{
+            Log.d(TAG, "Creating database");
 
             //By calling this method and empty database will be created into the default system path
             //of your application so we are gonna be able to overwrite that database with our database.
@@ -130,6 +136,7 @@ public class DataBaseHelper extends SQLiteOpenHelper {
     }
 
     public void openDataBase() throws SQLException {
+        Log.d(TAG, "Opening db");
 
         //Open the database
         String myPath = DB_PATH + DB_NAME;
@@ -162,6 +169,7 @@ public class DataBaseHelper extends SQLiteOpenHelper {
     // to you to create adapters for your views.
 
     public String[] getColumn(String name){
+        Log.d(TAG, "Start getColumn");
         Cursor cursor = myDataBase.query(TABLE_PRODUCTS, new String[] {name}, null, null, null, null, null);
 
         if(cursor.getCount() > 0)
@@ -174,6 +182,7 @@ public class DataBaseHelper extends SQLiteOpenHelper {
                 str[i] = cursor.getString(cursor.getColumnIndex(name));
                 i++;
             }
+            Log.d(TAG, "End getColumn");
             return str;
         }
         else
