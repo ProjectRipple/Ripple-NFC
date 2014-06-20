@@ -431,7 +431,16 @@ public class TriageActivity extends Activity {
         @Override
         protected String[] doInBackground(DataBaseHelper... params) {
             DataBaseHelper dataBaseHelper = params[0];
-            return dataBaseHelper.getColumn("SUBSTANCENAME");
+
+            Column column = Column.getInstance();
+            if(column.getColumn() == null) {
+                column.setColumn(dataBaseHelper.getColumn("SUBSTANCENAME"));
+                Log.d(TAG, "column was null");
+            } else {
+                Log.d(TAG, "column was not null");
+            }
+
+            return column.getColumn();
         }
 
         protected void onPostExecute(String[] result) {
