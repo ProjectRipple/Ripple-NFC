@@ -33,14 +33,16 @@
             android:layout_height="wrap_content"
             android:id="@+id/et_lastName"
             android:hint="Last name"
-            android:layout_weight="1"/>
+            android:layout_weight="1"
+            android:inputType="textCapWords"/>
 
         <EditText
             android:layout_width="wrap_content"
             android:layout_height="wrap_content"
             android:hint="First name"
             android:layout_weight="1"
-            android:id="@+id/et_firstName"/>
+            android:id="@+id/et_firstName"
+            android:inputType="textCapWords"/>
     </LinearLayout>
 <HorizontalScrollView
     android:layout_width="match_parent"

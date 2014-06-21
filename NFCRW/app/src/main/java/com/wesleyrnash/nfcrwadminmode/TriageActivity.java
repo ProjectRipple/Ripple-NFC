@@ -6,15 +6,9 @@ import android.content.Context;
 import android.content.Intent;
 import android.content.IntentFilter;
 import android.nfc.FormatException;
-import android.nfc.NdefMessage;
-import android.nfc.NdefRecord;
 import android.nfc.NfcAdapter;
-import android.nfc.Tag;
-import android.nfc.tech.Ndef;
 import android.os.AsyncTask;
 import android.os.Bundle;
-import android.provider.ContactsContract;
-import android.util.Base64;
 import android.util.Log;
 import android.view.Menu;
 import android.view.MenuItem;
@@ -27,26 +21,17 @@ import android.widget.TableRow;
 import android.widget.TextView;
 import android.widget.Toast;
 
-import org.json.JSONException;
-import org.json.JSONObject;
+import com.nxp.nfclib.ntag.NTag;
+import com.nxp.nfclib.ntag.NTag203x;
+import com.nxp.nfcliblite.Interface.NxpNfcLibLite;
+import com.nxp.nfcliblite.Interface.Nxpnfcliblitecallback;
+
 import org.msgpack.MessagePack;
-import org.msgpack.packer.Packer;
-import org.msgpack.template.Template;
-import static org.msgpack.template.Templates.tMap;
-import static org.msgpack.template.Templates.TString;
 
 import java.io.IOException;
-import java.io.UnsupportedEncodingException;
-import java.security.Key;
-import java.security.NoSuchAlgorithmException;
 import java.util.ArrayList;
-import java.util.Arrays;
 import java.util.HashMap;
 import java.util.Map;
-
-import javax.crypto.Cipher;
-import javax.crypto.NoSuchPaddingException;
-import javax.crypto.spec.SecretKeySpec;
 
 public class TriageActivity extends Activity {
 
@@ -59,7 +44,6 @@ public class TriageActivity extends Activity {
     NfcAdapter adapter;
     PendingIntent pendingIntent;
     IntentFilter writeTagFilters[];
-    Tag mytag;
     Context ctx;
 
     TextView lastName;
@@ -86,24 +70,18 @@ public class TriageActivity extends Activity {
     ArrayList<TextView> textViews;
     ArrayList<String> headers;
 
-    public static final String MIME_TEXT_PLAIN = "text/plain";
     public static final String TAG = "NFCRW";
-
-    //set up encryption variables
-    public static final String key = "TestTestTestTest";
-    Key aesKey;
-    Cipher cipher;
 
     //button to toggle between reading and writing
     Button toggleMode;
 
-    JSONObject jsonMessage;
-
     MessagePack msgPack;
-    Template<Map<String, String>> mapTemplate;
     Map<String, String> map;
 
     ArrayAdapter<String> stringAdapter;
+
+    NxpNfcLibLite libInstance = null;
+    private NTag nTag;
 
     @Override
     protected void onCreate(Bundle savedInstanceState) {
@@ -112,23 +90,7 @@ public class TriageActivity extends Activity {
 
         ctx=this;
 
-        //set up encryption key and cipher
-        try{
-            aesKey = new SecretKeySpec(key.getBytes(), "AES");
-            cipher = Cipher.getInstance("AES");
-        } catch (Exception e){
-            e.printStackTrace();
-        }
-
-        jsonMessage = new JSONObject();
-        try {
-            jsonMessage.put("s", 0);
-        } catch (JSONException e) {
-            e.printStackTrace();
-        }
-
         msgPack = new MessagePack();
-        mapTemplate = tMap(TString, TString);
         map = new HashMap<String, String>();
 
         //initialize UI elements
@@ -189,7 +151,6 @@ public class TriageActivity extends Activity {
                     mode = READ_MODE;
                     toggleMode.setText(R.string.string_readMode);
                     adapter = NfcAdapter.getDefaultAdapter(ctx);
-                    handleIntent(getIntent());
                 } else {
                     mode = WRITE_MODE;
                     toggleMode.setText(R.string.string_writeMode);
@@ -213,11 +174,9 @@ public class TriageActivity extends Activity {
         }
 
         new CreateStringArray().execute(dataBaseHelper);
-        //String[] substances = dataBaseHelper.getColumn("SUBSTANCENAME");
 
-//        adapter = new ArrayAdapter<String>(this, android.R.layout.simple_list_item_1, substances);
-//        table2Row1DS.setAdapter(adapter);
-//        table2Row1DS.setThreshold(3);
+        libInstance = NxpNfcLibLite.getInstance();
+        libInstance.registerActivity(this);
     }
 
     //reads the message contained on the tag
@@ -247,100 +206,45 @@ public class TriageActivity extends Activity {
         }
     }
 
-
-    //this method is called when a new intent is found. In this case, it is called whenever the tag is brought within range of the Android device
     @Override
-    protected void onNewIntent(Intent intent){
-        //check which mode is currently active
-        if(mode == WRITE_MODE){
-            //check that the intent that called this method was that an NFC tag was discovered
-            if(NfcAdapter.ACTION_TAG_DISCOVERED.equals(intent.getAction())){
-                //set NFC tag object to the data contained in the intent (i.e. the data on the tag)
-                mytag = intent.getParcelableExtra(NfcAdapter.EXTRA_TAG);
-            }
-            try {
-                //check that the tag was properly read
-                if(mytag==null){
-                    Toast.makeText(ctx, ctx.getString(R.string.error_detected), Toast.LENGTH_SHORT).show();
-                }else{
-                    //create the message to write to the tag
-                    //String message = createMessage();
-                    createMap();
-                    //write(message,mytag);
-                    Write writer = new Write(mytag, map);
-                    writer.write();
-                    //notify the user of successful writing
-                    Toast.makeText(ctx, ctx.getString(R.string.ok_writing), Toast.LENGTH_LONG ).show();
-                    //set all the text fields to Test for testing purposes
-                    for(int i = 0; i < textViews.size(); i++)
-                        textViews.get(i).setText("Test");
-                }
-            } catch (IOException e) {
-                Toast.makeText(ctx, ctx.getString(R.string.error_writing), Toast.LENGTH_SHORT ).show();
-                e.printStackTrace();
-                //btnWrite.setText(R.string.string_writeMessage);
-            } catch (FormatException e) {
-                Toast.makeText(ctx, ctx.getString(R.string.error_writing) , Toast.LENGTH_SHORT ).show();
-                e.printStackTrace();
-                //btnWrite.setText(R.string.string_writeMessage);
-            } catch (NullPointerException e){
-                Toast.makeText(ctx, "NULL POINTER EXCEPTION", Toast.LENGTH_SHORT).show();
-                e.printStackTrace();
-                //btnWrite.setText("NULL POINTER EXCEPTION");
-            }
+    protected void onNewIntent(Intent intent) {
+        libInstance.filterIntent(intent, new Nxpnfcliblitecallback(){
 
-        }
-        if(mode == READ_MODE){
-            //Toast.makeText(ctx, "Handling intent in Read Mode", Toast.LENGTH_SHORT).show();
-            handleIntent(intent);
-        }
+            @Override
+            public void onNTag203xCardDetected(NTag203x nTag203x) {
+                Log.d(TAG, "NTAG203 found");
+                nTag = nTag203x;
+                try {
+                    handleTag();
+                } catch (Throwable t) {
+                    Toast.makeText(ctx, "Unknown error, tap again", Toast.LENGTH_SHORT).show();
+                }
+            }
+        });
     }
 
-    //handles the intent in read mode
-    private void handleIntent(Intent intent) {
-        //check that the intent is for discovering an NFC tag
-        String action = intent.getAction();
-        if (NfcAdapter.ACTION_NDEF_DISCOVERED.equals(action)) {
-            Log.d(TAG, "NDEF DISCOVERED");
-
-            //check that the tag is in plain text
-            String type = intent.getType();
-            if (MIME_TEXT_PLAIN.equals(type)) {
-
-                //store data from the tag into a tag object
-                Tag tag = intent.getParcelableExtra(NfcAdapter.EXTRA_TAG);
-                try{
-                    //read from the tag
-                    Read reader = new Read(tag);
-                    reader.read();
-                    updateTextViews(reader.id, reader.result);
-                } catch (NullPointerException e){
-                    e.printStackTrace();
-                    Log.e(TAG, "Null Pointer", e);
-                }
+    private void handleTag(){
+        if (mode == WRITE_MODE){
+            try {
+                createMap();
+                Write writer = new Write(nTag, map);
+                writer.write();
+                //notify the user of successful writing
+                Toast.makeText(ctx, ctx.getString(R.string.ok_writing), Toast.LENGTH_LONG ).show();
+                //set all the text fields to Test for testing purposes
+                for(int i = 0; i < textViews.size(); i++)
+                    textViews.get(i).setText("Test");
+            } catch (IOException e) {
+                e.printStackTrace();
+            } catch (FormatException e) {
+                e.printStackTrace();
             }
-        //even if the tag is not in NDEF format, check that it's still a tag intent
-        } else if (NfcAdapter.ACTION_TECH_DISCOVERED.equals(action) || NfcAdapter.ACTION_TAG_DISCOVERED.equals(action)) {
-            Log.d(TAG, "TECH DISCOVERED");
 
-            // In case we would still use the Tech Discovered Intent
-            Tag tag = intent.getParcelableExtra(NfcAdapter.EXTRA_TAG);
-            String[] techList = tag.getTechList();
-            String searchedTech = Ndef.class.getName();
-
-            //check if the tag is of any of the types of acceptable tags
-            for (String tech : techList) {
-                if (searchedTech.equals(tech)) {
-                    //if so, read from the tag
-                    Read reader = new Read(tag);
-                    reader.read();
-                    updateTextViews(reader.id, reader.result);
-                    break;
-                }
-            }
+        } else if (mode == READ_MODE){
+            Read reader = new Read(nTag);
+            reader.read();
+            updateTextViews(reader.id, reader.result);
         }
-
-
     }
 
     //I'm not to sure why the foreground dispatch needs to be started and stopped in onPause and onResume
@@ -348,55 +252,16 @@ public class TriageActivity extends Activity {
     //without the activity chooser popping up
     @Override
     public void onPause(){
-        if(mode == READ_MODE)
-            stopForegroundDispatch(this, adapter);
-        super.onPause();
+        libInstance.stopForeGroundDispatch();
 
-        if(mode == WRITE_MODE)
-            WriteModeOff();
+        super.onPause();
     }
 
     @Override
     public void onResume(){
+        libInstance.startForeGroundDispatch();
+
         super.onResume();
-        if(mode == READ_MODE)
-            setupForegroundDispatch(this, adapter);
-        if(mode == WRITE_MODE)
-            WriteModeOn();
-    }
-
-    private void WriteModeOn(){
-        adapter.enableForegroundDispatch(this, pendingIntent, writeTagFilters, null);
-    }
-
-    private void WriteModeOff(){
-        adapter.disableForegroundDispatch(this);
-    }
-
-    public static void setupForegroundDispatch(final Activity activity, NfcAdapter adapter) {
-        final Intent intent = new Intent(activity.getApplicationContext(), activity.getClass());
-        intent.setFlags(Intent.FLAG_ACTIVITY_SINGLE_TOP);
-
-        final PendingIntent pendingIntent = PendingIntent.getActivity(activity.getApplicationContext(), 0, intent, 0);
-
-        IntentFilter[] filters = new IntentFilter[1];
-        String[][] techList = new String[][]{};
-
-        // Notice that this is the same filter as in our manifest.
-        filters[0] = new IntentFilter();
-        filters[0].addAction(NfcAdapter.ACTION_NDEF_DISCOVERED);
-        filters[0].addCategory(Intent.CATEGORY_DEFAULT);
-        try {
-            filters[0].addDataType(MIME_TEXT_PLAIN);
-        } catch (IntentFilter.MalformedMimeTypeException e) {
-            throw new RuntimeException("Check your mime type.");
-        }
-
-        adapter.enableForegroundDispatch(activity, pendingIntent, filters, techList);
-    }
-
-    public static void stopForegroundDispatch(final Activity activity, NfcAdapter adapter) {
-        adapter.disableForegroundDispatch(activity);
     }
 
     //These two methods were generated with teh program, so I don't know if they are necessary

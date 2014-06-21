@@ -6,35 +6,21 @@ import android.content.Context;
 import android.content.Intent;
 import android.content.IntentFilter;
 import android.nfc.FormatException;
-import android.nfc.NdefMessage;
-import android.nfc.NdefRecord;
 import android.nfc.NfcAdapter;
 import android.nfc.Tag;
-import android.nfc.tech.Ndef;
-import android.support.v7.app.ActionBarActivity;
-import android.support.v7.app.ActionBar;
-import android.support.v4.app.Fragment;
 import android.os.Bundle;
-import android.util.Base64;
 import android.util.Log;
-import android.view.LayoutInflater;
 import android.view.Menu;
 import android.view.MenuItem;
-import android.view.View;
-import android.view.ViewGroup;
-import android.os.Build;
-import android.widget.EditText;
 import android.widget.TextView;
 import android.widget.Toast;
 
-import java.io.IOException;
-import java.io.UnsupportedEncodingException;
-import java.security.Key;
-import java.util.ArrayList;
-import java.util.Arrays;
+import com.nxp.nfclib.ntag.NTag;
+import com.nxp.nfclib.ntag.NTag203x;
+import com.nxp.nfcliblite.Interface.NxpNfcLibLite;
+import com.nxp.nfcliblite.Interface.Nxpnfcliblitecallback;
 
-import javax.crypto.Cipher;
-import javax.crypto.spec.SecretKeySpec;
+import java.io.IOException;
 
 public class AdminActivity extends Activity {
 
@@ -53,6 +39,9 @@ public class AdminActivity extends Activity {
     //define a tag for debugging
     public static final String TAG = "NFCRW";
 
+    NxpNfcLibLite libInstance = null;
+    private NTag nTag;
+
     @Override
     protected void onCreate(Bundle savedInstanceState) {
         super.onCreate(savedInstanceState);
@@ -70,82 +59,39 @@ public class AdminActivity extends Activity {
         IntentFilter tagDetected = new IntentFilter(NfcAdapter.ACTION_TAG_DISCOVERED);
         tagDetected.addCategory(Intent.CATEGORY_DEFAULT);
         writeTagFilters = new IntentFilter[] { tagDetected };
-    }
 
-    //writes the id to the tag
-    private void write(String id, Tag tag) throws IOException, FormatException, NullPointerException {
-
-
-        // Get an instance of Ndef for the tag.
-        Ndef ndef = Ndef.get(tag);
-
-        //get the payload that is stored on the tag
-        byte[] text = getText(ndef);
-
-        //create NDEF records and turn them into a message
-        NdefRecord[] records = { createRecord(text, id) };
-        NdefMessage message = new NdefMessage(records);
-        // Enable I/O
-        ndef.connect();
-        // Write the message
-        ndef.writeNdefMessage(message);
-        // Close the connection
-        ndef.close();
-    }
-
-    //store the text from the tag
-    private byte[] getText(Ndef ndef){
-        //get the message on the tag
-        NdefMessage ndefMessage = ndef.getCachedNdefMessage();
-
-        //loop through the records
-        NdefRecord[] records = ndefMessage.getRecords();
-        for (NdefRecord ndefRecord : records) {
-            //check if a record is of the proper format
-            if (ndefRecord.getTnf() == NdefRecord.TNF_WELL_KNOWN && Arrays.equals(ndefRecord.getType(), NdefRecord.RTD_TEXT)) {
-                //return the whole payload
-                return ndefRecord.getPayload();
-            }
-        }
-        //if no properly formatted records are found
-        return "default".getBytes();
-    }
-
-    //create the NDEF record
-    private NdefRecord createRecord(byte[] text, String id) throws UnsupportedEncodingException {
-        //creates a record with the new id and old text
-        NdefRecord recordNFC = new NdefRecord(NdefRecord.TNF_WELL_KNOWN,  NdefRecord.RTD_TEXT,  id.getBytes(), text);
-        return recordNFC;
+        libInstance = NxpNfcLibLite.getInstance();
+        libInstance.registerActivity(this);
     }
 
     //checks for when a new intent arrives
     @Override
-    protected void onNewIntent(Intent intent){
-        //checks that the intent is for an NFC tag
-        if(NfcAdapter.ACTION_TAG_DISCOVERED.equals(intent.getAction())){
-            //store the information of the tag into an NFC tag object
-            mytag = intent.getParcelableExtra(NfcAdapter.EXTRA_TAG);
-        }
-        try {
-            //check that the tag was properly read
-            if(mytag==null){
-                Toast.makeText(ctx, ctx.getString(R.string.error_detected), Toast.LENGTH_SHORT).show();
-            }else{
-                //get the id from the user
-                String message = tagId.getText().toString();
-                //write the id to the tag
-                write(message,mytag);
-                //tell the user that the id was written successfully
-                adminInstructions.setText(R.string.ok_writing);
+    protected void onNewIntent(Intent intent) {
+        libInstance.filterIntent(intent, new Nxpnfcliblitecallback(){
+
+            @Override
+            public void onNTag203xCardDetected(NTag203x nTag203x) {
+                Log.d(TAG, "NTAG203 found");
+                nTag = nTag203x;
+                try {
+                    handleTag();
+                } catch (Throwable t) {
+                    Toast.makeText(ctx, "Unknown error, tap again", Toast.LENGTH_SHORT).show();
+                }
             }
+        });
+    }
+
+    private void handleTag(){
+        try {
+            String message = tagId.getText().toString();
+            Write writer = new Write(nTag, message);
+            writer.write();
+            //notify the user of successful writing
+            adminInstructions.setText(R.string.ok_writing);
         } catch (IOException e) {
-            Toast.makeText(ctx, ctx.getString(R.string.error_writing), Toast.LENGTH_SHORT ).show();
             e.printStackTrace();
         } catch (FormatException e) {
-            Toast.makeText(ctx, ctx.getString(R.string.error_writing) , Toast.LENGTH_SHORT ).show();
-            e.printStackTrace();
-        } catch (NullPointerException e){
-            Toast.makeText(ctx, "NULL POINTER EXCEPTION", Toast.LENGTH_SHORT).show();
             e.printStackTrace();
         }
     }

@@ -1,10 +1,12 @@
 package com.wesleyrnash.nfcrwadminmode;
 
+import android.nfc.FormatException;
 import android.nfc.NdefMessage;
 import android.nfc.NdefRecord;
-import android.nfc.Tag;
-import android.nfc.tech.Ndef;
 import android.util.Log;
+
+import com.nxp.nfclib.exceptions.SmartCardException;
+import com.nxp.nfclib.ntag.NTag;
 
 import org.msgpack.MessagePack;
 import org.msgpack.template.Template;
@@ -29,19 +31,19 @@ import static org.msgpack.template.Templates.tMap;
 
 public class Read {
 
-    Tag myTag;
-    String id;
+    private NTag myTag;
+    public String id;
     public static final String key = "TestTestTestTest";
-    Key aesKey;
-    Cipher cipher;
-    MessagePack msgPack;
-    Template<Map<String, String>> mapTemplate;
-    Map<String, String> map;
-    Map<String, String> result;
+    private Key aesKey;
+    private Cipher cipher;
+    private MessagePack msgPack;
+    private Template<Map<String, String>> mapTemplate;
+    private Map<String, String> map;
+    public Map<String, String> result;
 
     public static final String TAG = "NFCRW";
 
-    public Read(Tag tag){
+    public Read(NTag tag){
         myTag = tag;
         try{
             aesKey = new SecretKeySpec(key.getBytes(), "AES");
@@ -56,20 +58,36 @@ public class Read {
 
     //gets the message and records from the tag
     public void read() throws NullPointerException{
-        Ndef ndef = Ndef.get(myTag);
-
-        NdefMessage ndefMessage = ndef.getCachedNdefMessage();
-
-        NdefRecord[] records = ndefMessage.getRecords();
-        //check if the records are of acceptable format. If so, read the message
-        for (NdefRecord ndefRecord : records) {
-            if (ndefRecord.getTnf() == NdefRecord.TNF_WELL_KNOWN && Arrays.equals(ndefRecord.getType(), NdefRecord.RTD_TEXT)) {
-                try {
-                    readText(ndefRecord);
-                } catch (UnsupportedEncodingException e) {
-                    Log.e(TAG, "Unsupported Encoding", e);
+        NdefMessage ndefMessage = null;
+        try {
+            myTag.connect();
+            Log.d(TAG, "connected to tag");
+            if(!myTag.isT2T())
+                myTag.formatT2T();
+            Log.d(TAG, "formatted tag");
+            ndefMessage = myTag.readNDEF();
+            Log.d(TAG, "read tag");
+            NdefRecord[] records = ndefMessage.getRecords();
+            //check if the records are of acceptable format. If so, read the message
+            for (NdefRecord ndefRecord : records) {
+                if (ndefRecord.getTnf() == NdefRecord.TNF_WELL_KNOWN && Arrays.equals(ndefRecord.getType(), NdefRecord.RTD_TEXT)) {
+                    try {
+                        readText(ndefRecord);
+                    } catch (UnsupportedEncodingException e) {
+                        Log.d(TAG, "Unsupported Encoding");
+                    }
                 }
             }
+            myTag.close();
+        } catch (SmartCardException e) {
+            e.printStackTrace();
+            Log.d(TAG, "Smart Card Exception");
+        } catch (IOException e) {
+            e.printStackTrace();
+            Log.d(TAG, "IO Exception");
+        } catch (FormatException e) {
+            e.printStackTrace();
+            Log.d(TAG, "Format Exception");
         }
     }
 
