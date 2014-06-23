@@ -38,7 +38,6 @@ public class Read {
     private Cipher cipher;
     private MessagePack msgPack;
     private Template<Map<String, String>> mapTemplate;
-    private Map<String, String> map;
     public Map<String, String> result;
 
     public static final String TAG = "NFCRW";
@@ -53,7 +52,6 @@ public class Read {
         }
         msgPack = new MessagePack();
         mapTemplate = tMap(TString, TString);
-        map = new HashMap<String, String>();
     }
 
     //gets the message and records from the tag

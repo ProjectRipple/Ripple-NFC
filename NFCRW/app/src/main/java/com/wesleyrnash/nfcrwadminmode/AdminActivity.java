@@ -1,20 +1,23 @@
 package com.wesleyrnash.nfcrwadminmode;
 
 import android.app.Activity;
-import android.app.PendingIntent;
+import android.app.AlertDialog;
 import android.content.Context;
+import android.content.DialogInterface;
 import android.content.Intent;
-import android.content.IntentFilter;
+import android.graphics.Typeface;
 import android.nfc.FormatException;
-import android.nfc.NfcAdapter;
-import android.nfc.Tag;
 import android.os.Bundle;
+import android.text.InputType;
 import android.util.Log;
 import android.view.Menu;
 import android.view.MenuItem;
+import android.view.View;
+import android.widget.EditText;
 import android.widget.TextView;
 import android.widget.Toast;
 
+import com.nxp.nfclib.exceptions.SmartCardException;
 import com.nxp.nfclib.ntag.NTag;
 import com.nxp.nfclib.ntag.NTag203x;
 import com.nxp.nfcliblite.Interface.NxpNfcLibLite;
@@ -24,12 +27,6 @@ import java.io.IOException;
 
 public class AdminActivity extends Activity {
 
-    //set up NFC objects
-    NfcAdapter adapter;
-    PendingIntent pendingIntent;
-    IntentFilter writeTagFilters[];
-    Tag mytag;
-
     Context ctx;
 
     //create text view objects
@@ -38,6 +35,7 @@ public class AdminActivity extends Activity {
 
     //define a tag for debugging
     public static final String TAG = "NFCRW";
+    public static final String PASSWORD = "Ripple";
 
     NxpNfcLibLite libInstance = null;
     private NTag nTag;
@@ -53,15 +51,48 @@ public class AdminActivity extends Activity {
         adminInstructions = (TextView) findViewById(R.id.tv_adminInstructions);
         tagId = (TextView) findViewById(R.id.et_adminID);
 
-        //set up an intent filter for when a tag is detected
-        adapter = NfcAdapter.getDefaultAdapter(this);
-        pendingIntent = PendingIntent.getActivity(this, 0, new Intent(this, getClass()).addFlags(Intent.FLAG_ACTIVITY_SINGLE_TOP), 0);
-        IntentFilter tagDetected = new IntentFilter(NfcAdapter.ACTION_TAG_DISCOVERED);
-        tagDetected.addCategory(Intent.CATEGORY_DEFAULT);
-        writeTagFilters = new IntentFilter[] { tagDetected };
+        createPasswordDialog();
 
         libInstance = NxpNfcLibLite.getInstance();
         libInstance.registerActivity(this);
+    }
+
+    private void createPasswordDialog(){
+        final EditText password = new EditText(ctx);
+        password.setHint("Password");
+        password.setInputType(InputType.TYPE_CLASS_TEXT|InputType.TYPE_TEXT_VARIATION_PASSWORD);
+        password.setTypeface(Typeface.create("sans-serif", Typeface.NORMAL));
+
+        final AlertDialog.Builder builder = new AlertDialog.Builder(ctx)
+                .setView(password)
+                .setCancelable(false)
+                .setTitle("Enter Admin Password");
+
+        builder.setPositiveButton("OK", new DialogInterface.OnClickListener() {
+            @Override
+            public void onClick(DialogInterface dialogInterface, int i) {}
+        });
+
+        builder.setNegativeButton("Cancel", new DialogInterface.OnClickListener() {
+            @Override
+            public void onClick(DialogInterface dialogInterface, int i) {
+                AdminActivity.this.finish();
+            }
+        });
+
+        final AlertDialog dialog = builder.create();
+        dialog.show();
+        dialog.getButton(AlertDialog.BUTTON_POSITIVE).setOnClickListener(new View.OnClickListener() {
+            @Override
+            public void onClick(View view) {
+                String enteredPassword = password.getText().toString();
+                if (enteredPassword.equals(PASSWORD)) {
+                    dialog.cancel();
+                } else {
+                    dialog.setTitle("Invalid Password, try again");
+                }
+            }
+        });
     }
 
     //checks for when a new intent arrives
@@ -93,6 +124,8 @@ public class AdminActivity extends Activity {
             e.printStackTrace();
         } catch (FormatException e) {
             e.printStackTrace();
+        } catch (SmartCardException e) {
+            e.printStackTrace();
         }
     }
 
@@ -101,14 +134,16 @@ public class AdminActivity extends Activity {
     //without the activity chooser popping up
     @Override
     public void onPause(){
+        libInstance.stopForeGroundDispatch();
+
         super.onPause();
-        adapter.disableForegroundDispatch(this);
     }
 
     @Override
     public void onResume(){
+        libInstance.startForeGroundDispatch();
+
         super.onResume();
-        adapter.enableForegroundDispatch(this, pendingIntent, writeTagFilters, null);
     }
 
     //These two methods were generated with the program, so I don't know if they are necessary

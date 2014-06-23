@@ -1,12 +1,9 @@
 package com.wesleyrnash.nfcrwadminmode;
 
 import android.app.Activity;
-import android.app.PendingIntent;
 import android.content.Context;
 import android.content.Intent;
-import android.content.IntentFilter;
 import android.nfc.FormatException;
-import android.nfc.NfcAdapter;
 import android.os.AsyncTask;
 import android.os.Bundle;
 import android.util.Log;
@@ -21,6 +18,7 @@ import android.widget.TableRow;
 import android.widget.TextView;
 import android.widget.Toast;
 
+import com.nxp.nfclib.exceptions.SmartCardException;
 import com.nxp.nfclib.ntag.NTag;
 import com.nxp.nfclib.ntag.NTag203x;
 import com.nxp.nfcliblite.Interface.NxpNfcLibLite;
@@ -40,10 +38,6 @@ public class TriageActivity extends Activity {
     final int WRITE_MODE = 1;
     int mode = WRITE_MODE;
 
-    //set up NFC variables
-    NfcAdapter adapter;
-    PendingIntent pendingIntent;
-    IntentFilter writeTagFilters[];
     Context ctx;
 
     TextView lastName;
@@ -150,20 +144,12 @@ public class TriageActivity extends Activity {
                 if(mode == WRITE_MODE){
                     mode = READ_MODE;
                     toggleMode.setText(R.string.string_readMode);
-                    adapter = NfcAdapter.getDefaultAdapter(ctx);
                 } else {
                     mode = WRITE_MODE;
                     toggleMode.setText(R.string.string_writeMode);
                 }
             }
         });
-
-        //set up intent filter to handle intents when NFC is detected
-        adapter = NfcAdapter.getDefaultAdapter(this);
-        pendingIntent = PendingIntent.getActivity(this, 0, new Intent(this, getClass()).addFlags(Intent.FLAG_ACTIVITY_SINGLE_TOP), 0);
-        IntentFilter tagDetected = new IntentFilter(NfcAdapter.ACTION_TAG_DISCOVERED);
-        tagDetected.addCategory(Intent.CATEGORY_DEFAULT);
-        writeTagFilters = new IntentFilter[] { tagDetected };
 
         DataBaseHelper dataBaseHelper = new DataBaseHelper(ctx);
         try {
@@ -178,9 +164,6 @@ public class TriageActivity extends Activity {
         libInstance = NxpNfcLibLite.getInstance();
         libInstance.registerActivity(this);
     }
-
-    //reads the message contained on the tag
-
 
     //decrypts the message and sets the TextViews to the values specified by the message
     public void updateTextViews(String id, Map<String, String> result){
@@ -237,6 +220,8 @@ public class TriageActivity extends Activity {
             } catch (IOException e) {
                 e.printStackTrace();
             } catch (FormatException e) {
+                e.printStackTrace();
+            } catch (SmartCardException e) {
                 e.printStackTrace();
             }
 

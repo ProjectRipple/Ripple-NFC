@@ -66,9 +66,9 @@ public class Write {
     }
 
     //writes the message to the tag
-    public void write() throws IOException, FormatException, NullPointerException {
+    public void write() throws IOException, FormatException, NullPointerException, SmartCardException {
         // Get an instance of Ndef for the tag.
-        try {
+        //try {
             myTag.connect();
             if(!myTag.isT2T())
                 myTag.formatT2T();
@@ -80,10 +80,10 @@ public class Write {
             myTag.writeNDEF(message);
             Log.d(TAG, "Message written");
             myTag.close();
-        } catch (SmartCardException e) {
-            e.printStackTrace();
-            Log.d(TAG, "Smart Card Exception");
-        }
+//        } catch (SmartCardException e) {
+//            e.printStackTrace();
+//            Log.d(TAG, "Smart Card Exception");
+//        }
     }
 
     //get the ID that is currently on the tag so it is not overwritten
