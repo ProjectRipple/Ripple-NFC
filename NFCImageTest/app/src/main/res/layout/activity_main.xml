@@ -1,0 +1,135 @@
+<LinearLayout xmlns:android="http://schemas.android.com/apk/res/android"
+    xmlns:tools="http://schemas.android.com/tools"
+    android:layout_width="match_parent"
+    android:layout_height="match_parent"
+    android:paddingLeft="@dimen/activity_horizontal_margin"
+    android:paddingRight="@dimen/activity_horizontal_margin"
+    android:paddingTop="@dimen/activity_vertical_margin"
+    android:paddingBottom="@dimen/activity_vertical_margin"
+    tools:context="com.wesleyrnash.nfcimagetest.app.MainActivity"
+    android:focusable="true"
+    android:orientation="vertical">
+
+    <TableLayout
+        android:layout_width="wrap_content"
+        android:layout_height="wrap_content">
+
+        <TableRow>
+
+            <Button android:background="@drawable/border" android:id="@+id/b11" android:onClick="toggleColor"/>
+            <Button android:background="@drawable/border" android:id="@+id/b12" android:onClick="toggleColor"/>
+            <Button android:background="@drawable/border" android:id="@+id/b13" android:onClick="toggleColor"/>
+            <Button android:background="@drawable/border" android:id="@+id/b14" android:onClick="toggleColor"/>
+            <Button android:background="@drawable/border" android:id="@+id/b15" android:onClick="toggleColor"/>
+            <Button android:background="@drawable/border" android:id="@+id/b16" android:onClick="toggleColor"/>
+            <Button android:background="@drawable/border" android:id="@+id/b17" android:onClick="toggleColor"/>
+            <Button android:background="@drawable/border" android:id="@+id/b18" android:onClick="toggleColor"/>
+
+        </TableRow>
+
+        <TableRow>
+
+            <Button android:background="@drawable/border" android:id="@+id/b21" android:onClick="toggleColor"/>
+            <Button android:background="@drawable/border" android:id="@+id/b22" android:onClick="toggleColor"/>
+            <Button android:background="@drawable/border" android:id="@+id/b23" android:onClick="toggleColor"/>
+            <Button android:background="@drawable/border" android:id="@+id/b24" android:onClick="toggleColor"/>
+            <Button android:background="@drawable/border" android:id="@+id/b25" android:onClick="toggleColor"/>
+            <Button android:background="@drawable/border" android:id="@+id/b26" android:onClick="toggleColor"/>
+            <Button android:background="@drawable/border" android:id="@+id/b27" android:onClick="toggleColor"/>
+            <Button android:background="@drawable/border" android:id="@+id/b28" android:onClick="toggleColor"/>
+
+        </TableRow>
+
+        <TableRow>
+
+            <Button android:background="@drawable/border" android:id="@+id/b31" android:onClick="toggleColor"/>
+            <Button android:background="@drawable/border" android:id="@+id/b32" android:onClick="toggleColor"/>
+            <Button android:background="@drawable/border" android:id="@+id/b33" android:onClick="toggleColor"/>
+            <Button android:background="@drawable/border" android:id="@+id/b34" android:onClick="toggleColor"/>
+            <Button android:background="@drawable/border" android:id="@+id/b35" android:onClick="toggleColor"/>
+            <Button android:background="@drawable/border" android:id="@+id/b36" android:onClick="toggleColor"/>
+            <Button android:background="@drawable/border" android:id="@+id/b37" android:onClick="toggleColor"/>
+            <Button android:background="@drawable/border" android:id="@+id/b38" android:onClick="toggleColor"/>
+
+        </TableRow>
+
+        <TableRow>
+
+            <Button android:background="@drawable/border" android:id="@+id/b41" android:onClick="toggleColor"/>
+            <Button android:background="@drawable/border" android:id="@+id/b42" android:onClick="toggleColor"/>
+            <Button android:background="@drawable/border" android:id="@+id/b43" android:onClick="toggleColor"/>
+            <Button android:background="@drawable/border" android:id="@+id/b44" android:onClick="toggleColor"/>
+            <Button android:background="@drawable/border" android:id="@+id/b45" android:onClick="toggleColor"/>
+            <Button android:background="@drawable/border" android:id="@+id/b46" android:onClick="toggleColor"/>
+            <Button android:background="@drawable/border" android:id="@+id/b47" android:onClick="toggleColor"/>
+            <Button android:background="@drawable/border" android:id="@+id/b48" android:onClick="toggleColor"/>
+
+        </TableRow>
+
+        <TableRow>
+
+            <Button android:background="@drawable/border" android:id="@+id/b51" android:onClick="toggleColor"/>
+            <Button android:background="@drawable/border" android:id="@+id/b52" android:onClick="toggleColor"/>
+            <Button android:background="@drawable/border" android:id="@+id/b53" android:onClick="toggleColor"/>
+            <Button android:background="@drawable/border" android:id="@+id/b54" android:onClick="toggleColor"/>
+            <Button android:background="@drawable/border" android:id="@+id/b55" android:onClick="toggleColor"/>
+            <Button android:background="@drawable/border" android:id="@+id/b56" android:onClick="toggleColor"/>
+            <Button android:background="@drawable/border" android:id="@+id/b57" android:onClick="toggleColor"/>
+            <Button android:background="@drawable/border" android:id="@+id/b58" android:onClick="toggleColor"/>
+
+        </TableRow>
+
+        <TableRow>
+
+            <Button android:background="@drawable/border" android:id="@+id/b61" android:onClick="toggleColor"/>
+            <Button android:background="@drawable/border" android:id="@+id/b62" android:onClick="toggleColor"/>
+            <Button android:background="@drawable/border" android:id="@+id/b63" android:onClick="toggleColor"/>
+            <Button android:background="@drawable/border" android:id="@+id/b64" android:onClick="toggleColor"/>
+            <Button android:background="@drawable/border" android:id="@+id/b65" android:onClick="toggleColor"/>
+            <Button android:background="@drawable/border" android:id="@+id/b66" android:onClick="toggleColor"/>
+            <Button android:background="@drawable/border" android:id="@+id/b67" android:onClick="toggleColor"/>
+            <Button android:background="@drawable/border" android:id="@+id/b68" android:onClick="toggleColor"/>
+
+        </TableRow>
+
+        <TableRow>
+
+            <Button android:background="@drawable/border" android:id="@+id/b71" android:onClick="toggleColor"/>
+            <Button android:background="@drawable/border" android:id="@+id/b72" android:onClick="toggleColor"/>
+            <Button android:background="@drawable/border" android:id="@+id/b73" android:onClick="toggleColor"/>
+            <Button android:background="@drawable/border" android:id="@+id/b74" android:onClick="toggleColor"/>
+            <Button android:background="@drawable/border" android:id="@+id/b75" android:onClick="toggleColor"/>
+            <Button android:background="@drawable/border" android:id="@+id/b76" android:onClick="toggleColor"/>
+            <Button android:background="@drawable/border" android:id="@+id/b77" android:onClick="toggleColor"/>
+            <Button android:background="@drawable/border" android:id="@+id/b78" android:onClick="toggleColor"/>
+
+        </TableRow>
+
+        <TableRow>
+
+            <Button android:background="@drawable/border" android:id="@+id/b81" android:onClick="toggleColor"/>
+            <Button android:background="@drawable/border" android:id="@+id/b82" android:onClick="toggleColor"/>
+            <Button android:background="@drawable/border" android:id="@+id/b83" android:onClick="toggleColor"/>
+            <Button android:background="@drawable/border" android:id="@+id/b84" android:onClick="toggleColor"/>
+            <Button android:background="@drawable/border" android:id="@+id/b85" android:onClick="toggleColor"/>
+            <Button android:background="@drawable/border" android:id="@+id/b86" android:onClick="toggleColor"/>
+            <Button android:background="@drawable/border" android:id="@+id/b87" android:onClick="toggleColor"/>
+            <Button android:background="@drawable/border" android:id="@+id/b88" android:onClick="toggleColor"/>
+
+        </TableRow>
+
+    </TableLayout>
+
+    <Button
+        android:layout_width="wrap_content"
+        android:layout_height="wrap_content"
+        android:text="@string/string_writeMode"
+        android:id="@+id/button_mode"/>
+
+    <Button
+        android:layout_width="wrap_content"
+        android:layout_height="wrap_content"
+        android:text="Clear"
+        android:id="@+id/button_clear"/>
+
+</LinearLayout>
