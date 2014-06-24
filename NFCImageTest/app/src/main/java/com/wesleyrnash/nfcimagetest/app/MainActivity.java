@@ -3,7 +3,9 @@ package com.wesleyrnash.nfcimagetest.app;
 import android.app.Activity;
 import android.content.Context;
 import android.content.Intent;
+import android.graphics.Color;
 import android.graphics.drawable.Drawable;
+import android.nfc.FormatException;
 import android.os.Bundle;
 import android.util.Log;
 import android.view.Menu;
@@ -12,11 +14,13 @@ import android.view.View;
 import android.widget.Button;
 import android.widget.Toast;
 
+import com.nxp.nfclib.exceptions.SmartCardException;
 import com.nxp.nfclib.ntag.NTag;
 import com.nxp.nfclib.ntag.NTag203x;
 import com.nxp.nfcliblite.Interface.NxpNfcLibLite;
 import com.nxp.nfcliblite.Interface.Nxpnfcliblitecallback;
 
+import java.io.IOException;
 import java.util.ArrayList;
 
 
@@ -31,9 +35,15 @@ public class MainActivity extends Activity {
     Context ctx = this;
 
     Button toggleMode;
+    Button clearButton;
+
+    Drawable border_white;
+    Drawable border_black;
 
     private NTag tag;
     NxpNfcLibLite libInstance = null;
+
+    String imageMap;
 
     Button b11;
     Button b12;
@@ -259,7 +269,14 @@ public class MainActivity extends Activity {
         buttons.add(b87);
         buttons.add(b88);
 
+        for(Button button : buttons)
+            button.setTextColor(Color.WHITE);
+
+        border_white = getResources().getDrawable(R.drawable.border);
+        border_black = getResources().getDrawable(R.drawable.border_black);
+
         toggleMode = (Button) findViewById(R.id.button_mode);
+        clearButton = (Button) findViewById(R.id.button_clear);
 
         //set click listener for toggle button
         toggleMode.setOnClickListener(new View.OnClickListener() {
@@ -276,35 +293,36 @@ public class MainActivity extends Activity {
             }
         });
 
+        clearButton.setOnClickListener(new View.OnClickListener() {
+            @Override
+            public void onClick(View view) {
+                for(Button button : buttons) {
+                    button.setBackground(border_white);
+                    button.setTextColor(Color.WHITE);
+                }
+            }
+        });
+
         libInstance = NxpNfcLibLite.getInstance();
         libInstance.registerActivity(this);
     }
 
     public void toggleColor(View v){
         Log.d(TAG, "in toggleColor");
-        Drawable border = getResources().getDrawable(R.drawable.border);
-        Drawable border2 = getResources().getDrawable(R.drawable.border2);
         for(Button button : buttons){
             if(v.getId() == button.getId()){
                 Log.d(TAG, "button match");
-                if(button.getBackground().equals(border2)) {
+                if(button.getCurrentTextColor() == Color.BLACK) {
                     Log.d(TAG, "color was black");
-                    button.setBackground(border);
+                    button.setBackground(border_white);
+                    button.setTextColor(Color.WHITE);
                 } else {
                     Log.d(TAG, "color was white");
-                    button.setBackground(border2);
+                    button.setBackground(border_black);
+                    button.setTextColor(Color.BLACK);
                 }
             }
         }
-
-//        switch (v.getId()){
-//            case R.id.b11:
-//                if(b11.getSolidColor() == Color.WHITE)
-//                    b11.setBackgroundColor(Color.BLACK);
-//                else
-//                    b11.setBackgroundColor(Color.WHITE);
-//        }
-
     }
 
     @Override
@@ -324,29 +342,68 @@ public class MainActivity extends Activity {
     }
 
     private void handleTag(){
-//        if (mode == WRITE_MODE){
-//            try {
-//                createMap();
-//                Write writer = new Write(nTag, map);
-//                writer.write();
-//                //notify the user of successful writing
-//                Toast.makeText(ctx, ctx.getString(R.string.ok_writing), Toast.LENGTH_LONG ).show();
-//                //set all the text fields to Test for testing purposes
-//                for(int i = 0; i < textViews.size(); i++)
-//                    textViews.get(i).setText("Test");
-//            } catch (IOException e) {
-//                e.printStackTrace();
-//            } catch (FormatException e) {
-//                e.printStackTrace();
-//            } catch (SmartCardException e) {
-//                e.printStackTrace();
-//            }
-//
-//        } else if (mode == READ_MODE){
-//            Read reader = new Read(nTag);
-//            reader.read();
-//            updateTextViews(reader.id, reader.result);
-//        }
+        if (mode == WRITE_MODE){
+            try {
+                createImageMap();
+                Write writer = new Write(tag, imageMap);
+                writer.write();
+                //notify the user of successful writing
+                Toast.makeText(ctx, ctx.getString(R.string.ok_writing), Toast.LENGTH_LONG ).show();
+                //set all the text fields to Test for testing purposes
+                for(Button button : buttons){
+                    button.setBackground(border_white);
+                    button.setTextColor(Color.WHITE);
+                }
+            } catch (IOException e) {
+                e.printStackTrace();
+            } catch (FormatException e) {
+                e.printStackTrace();
+            } catch (SmartCardException e) {
+                e.printStackTrace();
+            }
+
+        } else if (mode == READ_MODE){
+            Read reader = new Read(tag);
+            reader.read();
+            updateButtons(reader.result);
+        }
+    }
+
+    private void createImageMap(){
+        imageMap = "";
+        for(Button button : buttons){
+            if (button.getCurrentTextColor() == Color.WHITE){
+                imageMap += "1";
+            } else {
+                imageMap += "0";
+            }
+        }
+    }
+
+    private void updateButtons(String result){
+        for(int i = 0; i < buttons.size(); i++){
+            if(result.charAt(i) == '0'){
+                buttons.get(i).setBackground(border_black);
+                buttons.get(i).setTextColor(Color.BLACK);
+            } else {
+                buttons.get(i).setBackground(border_white);
+                buttons.get(i).setTextColor(Color.WHITE);
+            }
+        }
+    }
+
+    @Override
+    public void onPause(){
+        libInstance.stopForeGroundDispatch();
+
+        super.onPause();
+    }
+
+    @Override
+    public void onResume(){
+        libInstance.startForeGroundDispatch();
+
+        super.onResume();
     }
 
 
