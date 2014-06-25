@@ -7,8 +7,8 @@
         <option name="externalProjectPath" value="$PROJECT_DIR$" />
         <option name="modules">
           <set>
-            <option value="C:\Users\Wesley\Downloads\Ripple-NFC-master\Ripple-NFC-master\NFCDrawTest" />
-            <option value="C:\Users\Wesley\Downloads\Ripple-NFC-master\Ripple-NFC-master\NFCDrawTest\app" />
+            <option value="C:\Users\Wesley\Ripple-NFC\NFCDrawTest" />
+            <option value="C:\Users\Wesley\Ripple-NFC\NFCDrawTest\app" />
           </set>
         </option>
       </GradleProjectSettings>

@@ -4,13 +4,14 @@
     android:layout_height="match_parent"
     tools:context="com.wesleyrnash.nfcdrawtest.app.MainActivity"
     android:background="#000000"
-    android:orientation="vertical">
+    android:orientation="vertical"
+    android:id="@+id/ll_main">
 
     <ImageView
         android:layout_width="510px"
         android:layout_height="765px"
         android:id="@+id/iv_draw"
-        android:background="#FFFFFF"/>
+        android:background="@drawable/blank_human_body_diagram"/>
 
     <Button
         android:layout_width="wrap_content"

@@ -8,6 +8,7 @@ import android.graphics.Canvas;
 import android.graphics.Color;
 import android.graphics.Paint;
 import android.graphics.Path;
+import android.graphics.PorterDuff;
 import android.nfc.FormatException;
 import android.os.Bundle;
 import android.util.Log;
@@ -67,7 +68,7 @@ public class MainActivity extends Activity implements View.OnTouchListener {
         mPaint = new Paint();
         mPaint.setAntiAlias(true);
         mPaint.setDither(true);
-        mPaint.setColor(Color.BLACK);
+        mPaint.setColor(Color.RED);
         mPaint.setStyle(Paint.Style.STROKE);
         mPaint.setStrokeJoin(Paint.Join.ROUND);
         mPaint.setStrokeCap(Paint.Cap.ROUND);
@@ -116,7 +117,7 @@ public class MainActivity extends Activity implements View.OnTouchListener {
         paths.add(mPath);
         points = new ArrayList<MyPoint>();
         pointArrays.add(points);
-        mCanvas.drawColor(Color.WHITE);
+        mCanvas.drawColor(Color.WHITE, PorterDuff.Mode.CLEAR);
         imageView.invalidate();
         Log.d(TAG, "done clearing screen");
     }
