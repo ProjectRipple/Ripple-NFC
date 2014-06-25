@@ -1,15 +1,31 @@
-<RelativeLayout xmlns:android="http://schemas.android.com/apk/res/android"
+<LinearLayout xmlns:android="http://schemas.android.com/apk/res/android"
     xmlns:tools="http://schemas.android.com/tools"
     android:layout_width="match_parent"
     android:layout_height="match_parent"
-    tools:context="com.wesleyrnash.nfcdrawtest.app.MainActivity">
+    tools:context="com.wesleyrnash.nfcdrawtest.app.MainActivity"
+    android:background="#000000"
+    android:orientation="vertical">
 
     <ImageView
-        android:layout_width="wrap_content"
-        android:layout_height="match_parent"
-        android:layout_alignParentTop="true"
-        android:layout_alignParentLeft="true"
-        android:layout_alignParentRight="true"
-        android:id="@+id/iv_draw"/>
+        android:layout_width="510px"
+        android:layout_height="765px"
+        android:id="@+id/iv_draw"
+        android:background="#FFFFFF"/>
 
-</RelativeLayout>
+    <Button
+        android:layout_width="wrap_content"
+        android:layout_height="wrap_content"
+        android:text="@string/string_writeMode"
+        android:background="#FFFFFF"
+        android:id="@+id/button_mode"
+        android:layout_marginTop="50dp"/>
+
+    <Button
+        android:layout_width="wrap_content"
+        android:layout_height="wrap_content"
+        android:text="Clear"
+        android:background="#FFFFFF"
+        android:id="@+id/button_clear"
+        android:layout_marginTop="25dp"/>
+
+</LinearLayout>
