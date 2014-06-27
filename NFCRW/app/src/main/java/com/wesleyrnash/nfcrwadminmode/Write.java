@@ -108,10 +108,10 @@ public class Write {
 
     //turns a string of text into an NDEF formatted record
     private NdefRecord createRecord(byte[] input) throws UnsupportedEncodingException {
-        NdefRecord recordNFC = null;
+        NdefRecord ndefRecord = null;
 
         if (source == SOURCE_ADMIN){
-            recordNFC = new NdefRecord(NdefRecord.TNF_WELL_KNOWN,  NdefRecord.RTD_TEXT,  adminId.getBytes(), input);
+            ndefRecord = new NdefRecord(NdefRecord.TNF_WELL_KNOWN,  NdefRecord.RTD_TEXT,  adminId.getBytes(), input);
         } else if (source == SOURCE_TRIAGE) {
             Log.d(TAG, "creating record: ");
 
@@ -150,9 +150,9 @@ public class Write {
 
             Log.d(TAG, new String(payload));
 
-            recordNFC = new NdefRecord(NdefRecord.TNF_WELL_KNOWN, NdefRecord.RTD_TEXT, input, payload);
+            ndefRecord = new NdefRecord(NdefRecord.TNF_WELL_KNOWN, NdefRecord.RTD_TEXT, input, payload);
         }
 
-        return recordNFC;
+        return ndefRecord;
     }
 }

@@ -198,6 +198,8 @@ public class TriageActivity extends Activity implements View.OnTouchListener {
             @Override
             public void onClick(View view) {
                 clearScreen();
+                for(TextView tv : textViews)
+                    tv.setText("");
             }
         });
 
@@ -425,8 +427,8 @@ public class TriageActivity extends Activity implements View.OnTouchListener {
                 //notify the user of successful writing
                 Toast.makeText(ctx, ctx.getString(R.string.ok_writing), Toast.LENGTH_LONG ).show();
                 //set all the text fields to Test for testing purposes
-                for(int i = 0; i < textViews.size(); i++)
-                    textViews.get(i).setText("Test");
+                for (TextView tv : textViews)
+                    tv.setText("Test");
                 clearScreen();
             } catch (IOException e) {
                 e.printStackTrace();
