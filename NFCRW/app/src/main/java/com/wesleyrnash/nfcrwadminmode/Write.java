@@ -19,18 +19,15 @@ import java.util.Map;
 import javax.crypto.Cipher;
 import javax.crypto.spec.SecretKeySpec;
 
-/**
- * Created by lucas_000 on 6/16/2014.
- */
 public class Write {
 
     private int source;
     private final int SOURCE_ADMIN = 0;
     private final int SOURCE_TRIAGE = 1;
     private NTag myTag;
-    public String id;
+    private byte[] imageBytes;
     private String adminId;
-    public static final String key = "TestTestTestTest";
+    private static final String key = "TestTestTestTest";
     private Key aesKey;
     private Cipher cipher;
     private MessagePack msgPack;
@@ -38,7 +35,7 @@ public class Write {
 
     public static final String TAG = "NFCRW";
 
-    public Write(NTag tag, Map<String, String> _map){
+    public Write(NTag tag, Map<String, String> _map, byte[] _image){
         myTag = tag;
         try{
             aesKey = new SecretKeySpec(key.getBytes(), "AES");
@@ -48,6 +45,7 @@ public class Write {
         }
         msgPack = new MessagePack();
         map = _map;
+        imageBytes = _image;
 
         source = SOURCE_TRIAGE;
     }
@@ -67,23 +65,17 @@ public class Write {
 
     //writes the message to the tag
     public void write() throws IOException, FormatException, NullPointerException, SmartCardException {
-        // Get an instance of Ndef for the tag.
-        //try {
-            myTag.connect();
-            if(!myTag.isT2T())
-                myTag.formatT2T();
+        myTag.connect();
+        if(!myTag.isT2T())
+            myTag.formatT2T();
 
-            NdefRecord[] records = {createRecord(getData())};
-            NdefMessage message = new NdefMessage(records);
+        NdefRecord[] records = {createRecord(getData())};
+        NdefMessage message = new NdefMessage(records);
 
-            // Enable I/O
-            myTag.writeNDEF(message);
-            Log.d(TAG, "Message written");
-            myTag.close();
-//        } catch (SmartCardException e) {
-//            e.printStackTrace();
-//            Log.d(TAG, "Smart Card Exception");
-//        }
+        // Enable I/O
+        myTag.writeNDEF(message);
+        Log.d(TAG, "Message written");
+        myTag.close();
     }
 
     //get the ID that is currently on the tag so it is not overwritten
@@ -123,9 +115,6 @@ public class Write {
         } else if (source == SOURCE_TRIAGE) {
             Log.d(TAG, "creating record: ");
 
-            //set the language
-            String lang = "en";
-
             byte[] msgpackBytes = null;
             try {
                 msgpackBytes = msgPack.write(map);
@@ -134,13 +123,20 @@ public class Write {
             } catch (Exception e) {
                 e.printStackTrace();
             }
+            Log.d(TAG, "set msgpackBytes: " + msgpackBytes.length);
+            byte[] totalBytes = new byte[msgpackBytes.length + imageBytes.length + 1];
+            totalBytes[0] = (byte) imageBytes.length;
+            Log.d(TAG, "setting totalBytes: " + totalBytes.length);
+            for (int i = 1; i < totalBytes.length; i++){
+                totalBytes[i] = i < (imageBytes.length + 1) ? imageBytes[i - 1] : msgpackBytes[i - imageBytes.length - 1];
+            }
 
-            Log.d(TAG, new String(msgpackBytes));
-            Log.d(TAG, "" + msgpackBytes.length);
+            //set the language
+            String lang = "en";
 
             byte[] langBytes = lang.getBytes("US-ASCII");
             int langLength = langBytes.length;
-            int textLength = msgpackBytes.length;
+            int textLength = totalBytes.length;
 
             //initialize byte array for the payload
             byte[] payload = new byte[1 + langLength + textLength];
@@ -150,7 +146,7 @@ public class Write {
 
             // copy langbytes and textbytes into payload
             System.arraycopy(langBytes, 0, payload, 1, langLength);
-            System.arraycopy(msgpackBytes, 0, payload, 1 + langLength, textLength);
+            System.arraycopy(totalBytes, 0, payload, 1 + langLength, textLength);
 
             Log.d(TAG, new String(payload));
 

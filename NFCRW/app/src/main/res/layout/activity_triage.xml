@@ -184,4 +184,26 @@
 
     </TableLayout>
     </HorizontalScrollView>
+    <LinearLayout
+        android:layout_width="530px"
+        android:layout_height="785px"
+        android:background="#000000" >
+
+        <ImageView
+            android:layout_width="510px"
+            android:layout_height="765px"
+            android:id="@+id/iv_draw"
+            android:background="@drawable/blank_human_body_diagram"
+            android:layout_marginTop="10px"
+            android:layout_marginLeft="10px"/>
+
+    </LinearLayout>
+
+    <Button
+        android:layout_width="wrap_content"
+        android:layout_height="wrap_content"
+        android:text="Clear"
+        android:id="@+id/button_clear"
+        android:layout_marginTop="15dp"/>
+
 </LinearLayout>

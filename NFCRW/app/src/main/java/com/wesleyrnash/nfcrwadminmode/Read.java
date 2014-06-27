@@ -25,10 +25,6 @@ import javax.crypto.spec.SecretKeySpec;
 import static org.msgpack.template.Templates.TString;
 import static org.msgpack.template.Templates.tMap;
 
-/**
- * Created by lucas_000 on 6/16/2014.
- */
-
 public class Read {
 
     private NTag myTag;
@@ -39,6 +35,7 @@ public class Read {
     private MessagePack msgPack;
     private Template<Map<String, String>> mapTemplate;
     public Map<String, String> result;
+    public byte[] imageResult;
 
     public static final String TAG = "NFCRW";
 
@@ -55,7 +52,7 @@ public class Read {
     }
 
     //gets the message and records from the tag
-    public void read() throws NullPointerException{
+    public void read() throws NullPointerException, SmartCardException, IOException, FormatException{
         NdefMessage ndefMessage = null;
         try {
             myTag.connect();
@@ -107,10 +104,22 @@ public class Read {
         getIdAndText(textBytes);
     }
 
-    private void getIdAndText(byte[] strings) {
+    private void getIdAndText(byte[] data) {
         //check to make sure the message isn't empty
-        if (strings != null) {
-            Log.d(TAG, new String(strings));
+        if (data != null) {
+            Log.d(TAG, "data length: " + data.length);
+
+            int drawLength = (int) data[0];
+            imageResult = new byte[drawLength];
+            Log.d(TAG, "drawLength: " + drawLength);
+            System.arraycopy(data, 1, imageResult, 0, drawLength);
+            Log.d(TAG, "imageResult set");
+
+            int stringsLength = data.length - drawLength - 1;
+            byte[] strings = new byte[stringsLength];
+            Log.d(TAG, "stringsLength: " + stringsLength);
+            System.arraycopy(data, drawLength + 1, strings, 0, stringsLength);
+            Log.d(TAG, "strings set");
             //create an ArrayList to store the bytes of the message
             ArrayList<Byte> resultBytes = new ArrayList<Byte>();
             try{
@@ -138,8 +147,6 @@ public class Read {
             }
 
             Log.d(TAG, result.toString());
+        }
     }
-}
-
-
 }

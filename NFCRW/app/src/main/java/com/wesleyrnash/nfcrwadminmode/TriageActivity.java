@@ -3,16 +3,24 @@ package com.wesleyrnash.nfcrwadminmode;
 import android.app.Activity;
 import android.content.Context;
 import android.content.Intent;
+import android.graphics.Bitmap;
+import android.graphics.Canvas;
+import android.graphics.Color;
+import android.graphics.Paint;
+import android.graphics.Path;
+import android.graphics.PorterDuff;
 import android.nfc.FormatException;
 import android.os.AsyncTask;
 import android.os.Bundle;
 import android.util.Log;
 import android.view.Menu;
 import android.view.MenuItem;
+import android.view.MotionEvent;
 import android.view.View;
 import android.widget.ArrayAdapter;
 import android.widget.AutoCompleteTextView;
 import android.widget.Button;
+import android.widget.ImageView;
 import android.widget.TableLayout;
 import android.widget.TableRow;
 import android.widget.TextView;
@@ -29,9 +37,10 @@ import org.msgpack.MessagePack;
 import java.io.IOException;
 import java.util.ArrayList;
 import java.util.HashMap;
+import java.util.LinkedList;
 import java.util.Map;
 
-public class TriageActivity extends Activity {
+public class TriageActivity extends Activity implements View.OnTouchListener {
 
     //initialize values for read and write mode and set initial mode to WRITE_MODE
     final int READ_MODE = 0;
@@ -69,6 +78,18 @@ public class TriageActivity extends Activity {
     //button to toggle between reading and writing
     Button toggleMode;
 
+    //set up drawing stuff
+    Button clearButton;
+    ImageView imageView;
+    Bitmap bitmap;
+    private Canvas mCanvas;
+    private Path mPath;
+    private Paint mPaint;
+    private LinkedList<Path> paths = new LinkedList<Path>();
+    private LinkedList<ArrayList<MyPoint>> pointArrays = new LinkedList<ArrayList<MyPoint>>();
+    private ArrayList<MyPoint> points = new ArrayList<MyPoint>();
+    byte[] imageBytes;
+
     MessagePack msgPack;
     Map<String, String> map;
 
@@ -76,6 +97,8 @@ public class TriageActivity extends Activity {
 
     NxpNfcLibLite libInstance = null;
     private NTag nTag;
+
+
 
     @Override
     protected void onCreate(Bundle savedInstanceState) {
@@ -134,7 +157,27 @@ public class TriageActivity extends Activity {
         textViews.add(table2Row1Other);
         headers.add("t2r1o");
 
+        imageView = (ImageView) findViewById(R.id.iv_draw);
+
+        bitmap = Bitmap.createBitmap(510, 765, Bitmap.Config.ARGB_8888);
+        mCanvas = new Canvas(bitmap);
+        mPaint = new Paint();
+        mPaint.setAntiAlias(true);
+        mPaint.setDither(true);
+        mPaint.setColor(Color.RED);
+        mPaint.setStyle(Paint.Style.STROKE);
+        mPaint.setStrokeJoin(Paint.Join.ROUND);
+        mPaint.setStrokeCap(Paint.Cap.ROUND);
+        mPaint.setStrokeWidth(6);
+        imageView.setImageBitmap(bitmap);
+        imageView.setOnTouchListener(this);
+
+        mPath = new Path();
+        paths.add(mPath);
+        pointArrays.add(points);
+
         toggleMode = (Button) findViewById(R.id.button_readwrite);
+        clearButton = (Button) findViewById(R.id.button_clear);
 
         //set click listener for toggle button
         toggleMode.setOnClickListener(new View.OnClickListener() {
@@ -151,6 +194,13 @@ public class TriageActivity extends Activity {
             }
         });
 
+        clearButton.setOnClickListener(new View.OnClickListener() {
+            @Override
+            public void onClick(View view) {
+                clearScreen();
+            }
+        });
+
         DataBaseHelper dataBaseHelper = new DataBaseHelper(ctx);
         try {
             dataBaseHelper.createDataBase();
@@ -163,6 +213,85 @@ public class TriageActivity extends Activity {
 
         libInstance = NxpNfcLibLite.getInstance();
         libInstance.registerActivity(this);
+    }
+
+    private void clearScreen(){
+        Log.d(TAG, "clearing screen");
+        paths.clear();
+        pointArrays.clear();
+        mPath = new Path();
+        paths.add(mPath);
+        points = new ArrayList<MyPoint>();
+        pointArrays.add(points);
+        mCanvas.drawColor(Color.WHITE, PorterDuff.Mode.CLEAR);
+        imageView.invalidate();
+        Log.d(TAG, "done clearing screen");
+    }
+
+    private float mX, mY;
+    private static final float TOUCH_TOLERANCE = 10;
+
+    private void touch_start(float x, float y) {
+        mPath.reset();
+        mPath.moveTo(x, y);
+        mX = x;
+        mY = y;
+        points.add(new MyPoint(mX, mY));
+    }
+    private void touch_move(float x, float y) {
+        float dx = Math.abs(x - mX);
+        float dy = Math.abs(y - mY);
+        if (dx >= TOUCH_TOLERANCE || dy >= TOUCH_TOLERANCE) {
+            mPath.quadTo(mX, mY, (x + mX)/2, (y + mY)/2);
+            mX = x;
+            mY = y;
+            points.add(new MyPoint(mX, mY));
+        }
+    }
+    private void touch_up() {
+        mPath.lineTo(mX, mY);
+        // commit the path to our offscreen
+        mCanvas.drawPath(mPath, mPaint);
+        // kill this so we don't double draw
+        mPath = new Path();
+        paths.add(mPath);
+
+        for(MyPoint point : points){
+            Log.d(TAG, "" + (int) point.x + ", " + (int) point.y);
+        }
+        Log.d(TAG, "" + points.size());
+        points = new ArrayList<MyPoint>();
+        pointArrays.add(points);
+    }
+
+    @Override
+    public boolean onTouch(View arg0, MotionEvent event) {
+        float x = event.getX();
+        float y = event.getY();
+
+        switch (event.getAction()) {
+            case MotionEvent.ACTION_DOWN:
+                touch_start(x, y);
+                imageView.invalidate();
+                break;
+            case MotionEvent.ACTION_MOVE:
+                touch_move(x, y);
+                imageView.invalidate();
+                break;
+            case MotionEvent.ACTION_UP:
+                touch_up();
+                imageView.invalidate();
+                break;
+        }
+        updateCanvas();
+        return true;
+    }
+
+    private void updateCanvas() {
+
+        for (Path p : paths){
+            mCanvas.drawPath(p, mPaint);
+        }
     }
 
     //decrypts the message and sets the TextViews to the values specified by the message
@@ -189,6 +318,81 @@ public class TriageActivity extends Activity {
         }
     }
 
+    private void createImageBytes(){
+        pointArrays.remove(pointArrays.size()-1);
+        ArrayList<Byte> imagePoints = new ArrayList<Byte>();
+        int x, y;
+        for(ArrayList<MyPoint> pointArray : pointArrays){
+            imagePoints.add((byte) -127);
+            imagePoints.add((byte) -127);
+            for(MyPoint point : pointArray){
+                x = (int) point.x/2 - 127;
+                y = (int) point.y/3 - 127;
+                if (x == -127)
+                    x++;
+                else if (x == 128)
+                    x--;
+                if (y == -127)
+                    y++;
+                else if (y == 128)
+                    y--;
+                byte bytex = (byte) x;
+                byte bytey = (byte) y;
+                Log.d(TAG, "" + bytex + ", " + bytey);
+                imagePoints.add(bytex);
+                imagePoints.add(bytey);
+            }
+        }
+        imageBytes = new byte[imagePoints.size()];
+        Log.d(TAG, "creating byte array");
+        for(int i = 0; i < imagePoints.size(); i++){
+            imageBytes[i] = imagePoints.get(i);
+        }
+        Log.d(TAG, "byte array size: " + imageBytes.length);
+    }
+
+    private void updateDrawing(byte[] image){
+        Log.d(TAG, "imagePoints created");
+        float x, y, px = 0, py = 0;
+        mPath = new Path();
+        paths.add(mPath);
+        points = new ArrayList<MyPoint>();
+        pointArrays.add(points);
+        boolean first = true;
+        Log.d(TAG, "loop through byte array");
+        for(int i = 2; i < image.length; i += 2){
+            if((int) image[i] == -127) {
+                mPath.lineTo(px, py);
+                mPath = new Path();
+                paths.add(mPath);
+                points = new ArrayList<MyPoint>();
+                pointArrays.add(points);
+                first = true;
+            } else {
+
+                x = (((int) image[i]) + 127) * 2;
+                y = (((int) image[i+1]) + 127) * 3;
+                Log.d(TAG, "add to path: " + x + ", " + y);
+                if(first){
+                    first = false;
+                    mPath.moveTo(x, y);
+                } else {
+                    mPath.quadTo(px, py, (x + px)/2, (y + py)/2);
+                }
+                px = x;
+                py = y;
+                points.add(new MyPoint(x, y));
+            }
+        }
+        Log.d(TAG, "update canvas");
+        updateCanvas();
+        imageView.invalidate();
+        mPath = new Path();
+        paths.add(mPath);
+        points = new ArrayList<MyPoint>();
+        pointArrays.add(points);
+    }
+
     @Override
     protected void onNewIntent(Intent intent) {
         libInstance.filterIntent(intent, new Nxpnfcliblitecallback(){
@@ -209,14 +413,21 @@ public class TriageActivity extends Activity {
     private void handleTag(){
         if (mode == WRITE_MODE){
             try {
+                Log.d(TAG, "handling tag");
                 createMap();
-                Write writer = new Write(nTag, map);
+                Log.d(TAG, "created map");
+                createImageBytes();
+                Log.d(TAG, "created image bytes");
+                Write writer = new Write(nTag, map, imageBytes);
+                Log.d(TAG, "created writer object");
                 writer.write();
+                Log.d(TAG, "write successful");
                 //notify the user of successful writing
                 Toast.makeText(ctx, ctx.getString(R.string.ok_writing), Toast.LENGTH_LONG ).show();
                 //set all the text fields to Test for testing purposes
                 for(int i = 0; i < textViews.size(); i++)
                     textViews.get(i).setText("Test");
+                clearScreen();
             } catch (IOException e) {
                 e.printStackTrace();
             } catch (FormatException e) {
@@ -226,9 +437,26 @@ public class TriageActivity extends Activity {
             }
 
         } else if (mode == READ_MODE){
+            Log.d(TAG, "read mode");
             Read reader = new Read(nTag);
-            reader.read();
+            Log.d(TAG, "reader created");
+            try {
+                reader.read();
+                Log.d(TAG, "read successful");
+            } catch (SmartCardException e) {
+                e.printStackTrace();
+                Log.d(TAG, "Smart Card Exception");
+            } catch (IOException e) {
+                e.printStackTrace();
+                Log.d(TAG, "IO Exception");
+            } catch (FormatException e) {
+                e.printStackTrace();
+                Log.d(TAG, "Format Exception");
+            }
             updateTextViews(reader.id, reader.result);
+            Log.d(TAG, "update text views successful");
+            updateDrawing(reader.imageResult);
+            Log.d(TAG, "update drawing successful");
         }
     }
 
