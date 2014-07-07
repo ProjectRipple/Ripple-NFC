@@ -33,7 +33,6 @@ import org.msgpack.MessagePack;
 
 import java.util.ArrayList;
 import java.util.HashMap;
-import java.util.LinkedList;
 import java.util.Map;
 
 
@@ -80,12 +79,8 @@ public class TriageActivity extends Activity implements View.OnTouchListener {
     ImageView imageView;
     Bitmap bitmap;
     private Canvas mCanvas;
-    private Path mPath;
     private Paint mPaint;
-    private LinkedList<Path> paths = new LinkedList<Path>();
-    private LinkedList<ArrayList<MyPoint>> pointArrays = new LinkedList<ArrayList<MyPoint>>();
-    private ArrayList<MyPoint> points = new ArrayList<MyPoint>();
-    byte[] imageBytes;
+    private DrawingHandler drawingHandler;
 
     MessagePack msgPack;
     Map<String, String> map;
@@ -171,9 +166,7 @@ public class TriageActivity extends Activity implements View.OnTouchListener {
         imageView.setImageBitmap(bitmap);
         imageView.setOnTouchListener(this);
 
-        mPath = new Path();
-        paths.add(mPath);
-        pointArrays.add(points);
+        drawingHandler = new DrawingHandler();
 
         toggleMode = (Button) findViewById(R.id.button_readwrite);
         clearButton = (Button) findViewById(R.id.button_clear);
@@ -221,51 +214,10 @@ public class TriageActivity extends Activity implements View.OnTouchListener {
 
     private void clearScreen(){
         Log.d(TAG, "clearing screen");
-        paths.clear();
-        pointArrays.clear();
-        mPath = new Path();
-        paths.add(mPath);
-        points = new ArrayList<MyPoint>();
-        pointArrays.add(points);
+        drawingHandler.clear();
         mCanvas.drawColor(Color.WHITE, PorterDuff.Mode.CLEAR);
         imageView.invalidate();
         Log.d(TAG, "done clearing screen");
-    }
-
-    private float mX, mY;
-    private static final float TOUCH_TOLERANCE = 10;
-
-    private void touch_start(float x, float y) {
-        mPath.reset();
-        mPath.moveTo(x, y);
-        mX = x;
-        mY = y;
-        points.add(new MyPoint(mX, mY));
-    }
-    private void touch_move(float x, float y) {
-        float dx = Math.abs(x - mX);
-        float dy = Math.abs(y - mY);
-        if (dx >= TOUCH_TOLERANCE || dy >= TOUCH_TOLERANCE) {
-            mPath.quadTo(mX, mY, (x + mX)/2, (y + mY)/2);
-            mX = x;
-            mY = y;
-            points.add(new MyPoint(mX, mY));
-        }
-    }
-    private void touch_up() {
-        mPath.lineTo(mX, mY);
-        // commit the path to our offscreen
-        mCanvas.drawPath(mPath, mPaint);
-        // kill this so we don't double draw
-        mPath = new Path();
-        paths.add(mPath);
-
-        for(MyPoint point : points){
-            Log.d(TAG, "" + (int) point.x + ", " + (int) point.y);
-        }
-        Log.d(TAG, "" + points.size());
-        points = new ArrayList<MyPoint>();
-        pointArrays.add(points);
     }
 
     @Override
@@ -275,15 +227,17 @@ public class TriageActivity extends Activity implements View.OnTouchListener {
 
         switch (event.getAction()) {
             case MotionEvent.ACTION_DOWN:
-                touch_start(x, y);
+                drawingHandler.touch_start(x, y);
                 imageView.invalidate();
                 break;
             case MotionEvent.ACTION_MOVE:
-                touch_move(x, y);
+                drawingHandler.touch_move(x, y);
                 imageView.invalidate();
                 break;
             case MotionEvent.ACTION_UP:
-                touch_up();
+                drawingHandler.finishPath();
+                mCanvas.drawPath(drawingHandler.getPath(), mPaint);
+                drawingHandler.startNewPath();
                 imageView.invalidate();
                 break;
         }
@@ -293,7 +247,7 @@ public class TriageActivity extends Activity implements View.OnTouchListener {
 
     private void updateCanvas() {
 
-        for (Path p : paths){
+        for (Path p : drawingHandler.getPathList()){
             mCanvas.drawPath(p, mPaint);
         }
     }
@@ -322,79 +276,12 @@ public class TriageActivity extends Activity implements View.OnTouchListener {
         }
     }
 
-    private void createImageBytes(){
-        pointArrays.remove(pointArrays.size()-1);
-        ArrayList<Byte> imagePoints = new ArrayList<Byte>();
-        int x, y;
-        for(ArrayList<MyPoint> pointArray : pointArrays){
-            imagePoints.add((byte) -127);
-            imagePoints.add((byte) -127);
-            for(MyPoint point : pointArray){
-                x = (int) point.x/2 - 127;
-                y = (int) point.y/3 - 127;
-                if (x == -127)
-                    x++;
-                else if (x == 128)
-                    x--;
-                if (y == -127)
-                    y++;
-                else if (y == 128)
-                    y--;
-                byte bytex = (byte) x;
-                byte bytey = (byte) y;
-                Log.d(TAG, "" + bytex + ", " + bytey);
-                imagePoints.add(bytex);
-                imagePoints.add(bytey);
-            }
-        }
-        imageBytes = new byte[imagePoints.size()];
-        Log.d(TAG, "creating byte array");
-        for(int i = 0; i < imagePoints.size(); i++){
-            imageBytes[i] = imagePoints.get(i);
-        }
-        Log.d(TAG, "byte array size: " + imageBytes.length);
-    }
-
     private void updateDrawing(byte[] image){
-        Log.d(TAG, "imagePoints created");
-        float x, y, px = 0, py = 0;
-        mPath = new Path();
-        paths.add(mPath);
-        points = new ArrayList<MyPoint>();
-        pointArrays.add(points);
-        boolean first = true;
-        Log.d(TAG, "loop through byte array");
-        for(int i = 2; i < image.length; i += 2){
-            if((int) image[i] == -127) {
-                mPath.lineTo(px, py);
-                mPath = new Path();
-                paths.add(mPath);
-                points = new ArrayList<MyPoint>();
-                pointArrays.add(points);
-                first = true;
-            } else {
-
-                x = (((int) image[i]) + 127) * 2;
-                y = (((int) image[i+1]) + 127) * 3;
-                Log.d(TAG, "add to path: " + x + ", " + y);
-                if(first){
-                    first = false;
-                    mPath.moveTo(x, y);
-                } else {
-                    mPath.quadTo(px, py, (x + px)/2, (y + py)/2);
-                }
-                px = x;
-                py = y;
-                points.add(new MyPoint(x, y));
-            }
-        }
+        drawingHandler.updateDrawing(image);
         Log.d(TAG, "update canvas");
         updateCanvas();
         imageView.invalidate();
-        mPath = new Path();
-        paths.add(mPath);
-        points = new ArrayList<MyPoint>();
-        pointArrays.add(points);
+        drawingHandler.startNewPath();
     }
 
     @Override
@@ -411,9 +298,9 @@ public class TriageActivity extends Activity implements View.OnTouchListener {
                 Log.d(TAG, "handling tag");
                 createMap();
                 Log.d(TAG, "created map");
-                createImageBytes();
+                drawingHandler.createImageBytes();
                 Log.d(TAG, "created image bytes");
-                Write writer = new Write(mytag, map, imageBytes);
+                Write writer = new Write(mytag, map, drawingHandler.getImageBytes());
                 Log.d(TAG, "created writer object");
                 writer.write();
                 Log.d(TAG, "write successful");

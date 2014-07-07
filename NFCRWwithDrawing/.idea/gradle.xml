@@ -7,8 +7,8 @@
         <option name="externalProjectPath" value="$PROJECT_DIR$" />
         <option name="modules">
           <set>
-            <option value="C:\Users\Wesley\AndroidStudioProjects\NFCRWwithDrawing" />
-            <option value="C:\Users\Wesley\AndroidStudioProjects\NFCRWwithDrawing\app" />
+            <option value="C:\Users\Wesley\Ripple-NFC\NFCRWwithDrawing" />
+            <option value="C:\Users\Wesley\Ripple-NFC\NFCRWwithDrawing\app" />
           </set>
         </option>
       </GradleProjectSettings>
