@@ -116,20 +116,12 @@ public class Write {
             try {
                 packer.write(imageBytes);
                 packer.write(map);
-//                msgpackBytes = msgPack.write(map);
                 msgpackBytes = out.toByteArray();
                 cipher.init(Cipher.ENCRYPT_MODE, aesKey);
                 msgpackBytes = cipher.doFinal(msgpackBytes);
             } catch (Exception e) {
                 e.printStackTrace();
             }
-//            Log.d(TAG, "set msgpackBytes: " + msgpackBytes.length);
-//            byte[] totalBytes = new byte[msgpackBytes.length + imageBytes.length + 1];
-//            totalBytes[0] = (byte) imageBytes.length;
-//            Log.d(TAG, "setting totalBytes: " + totalBytes.length);
-//            for (int i = 1; i < totalBytes.length; i++){
-//                totalBytes[i] = i < (imageBytes.length + 1) ? imageBytes[i - 1] : msgpackBytes[i - imageBytes.length - 1];
-//            }
 
             //set the language
             String lang = "en";

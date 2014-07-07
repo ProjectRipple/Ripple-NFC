@@ -98,17 +98,6 @@ public class Read {
         if (data != null) {
             Log.d(TAG, "data length: " + data.length);
 
-//            int drawLength = (int) data[0];
-//            imageResult = new byte[drawLength];
-//            Log.d(TAG, "drawLength: " + drawLength);
-//            System.arraycopy(data, 1, imageResult, 0, drawLength);
-//            Log.d(TAG, "imageResult set");
-//
-//            int stringsLength = data.length - drawLength - 1;
-//            byte[] strings = new byte[stringsLength];
-//            Log.d(TAG, "stringsLength: " + stringsLength);
-//            System.arraycopy(data, drawLength + 1, strings, 0, stringsLength);
-//            Log.d(TAG, "strings set");
             //create an ArrayList to store the bytes of the message
             ArrayList<Byte> resultBytes = new ArrayList<Byte>();
             try{
