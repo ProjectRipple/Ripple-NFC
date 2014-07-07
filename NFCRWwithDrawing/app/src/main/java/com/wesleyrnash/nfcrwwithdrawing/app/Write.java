@@ -8,7 +8,9 @@ import android.nfc.tech.Ndef;
 import android.util.Log;
 
 import org.msgpack.MessagePack;
+import org.msgpack.packer.Packer;
 
+import java.io.ByteArrayOutputStream;
 import java.io.IOException;
 import java.io.UnsupportedEncodingException;
 import java.security.Key;
@@ -107,29 +109,34 @@ public class Write {
             ndefRecord = new NdefRecord(NdefRecord.TNF_WELL_KNOWN,  NdefRecord.RTD_TEXT,  adminId.getBytes(), input);
         } else if (source == SOURCE_TRIAGE) {
             Log.d(TAG, "creating record: ");
+            ByteArrayOutputStream out = new ByteArrayOutputStream();
+            Packer packer = msgPack.createPacker(out);
 
             byte[] msgpackBytes = null;
             try {
-                msgpackBytes = msgPack.write(map);
+                packer.write(imageBytes);
+                packer.write(map);
+//                msgpackBytes = msgPack.write(map);
+                msgpackBytes = out.toByteArray();
                 cipher.init(Cipher.ENCRYPT_MODE, aesKey);
                 msgpackBytes = cipher.doFinal(msgpackBytes);
             } catch (Exception e) {
                 e.printStackTrace();
             }
-            Log.d(TAG, "set msgpackBytes: " + msgpackBytes.length);
-            byte[] totalBytes = new byte[msgpackBytes.length + imageBytes.length + 1];
-            totalBytes[0] = (byte) imageBytes.length;
-            Log.d(TAG, "setting totalBytes: " + totalBytes.length);
-            for (int i = 1; i < totalBytes.length; i++){
-                totalBytes[i] = i < (imageBytes.length + 1) ? imageBytes[i - 1] : msgpackBytes[i - imageBytes.length - 1];
-            }
+//            Log.d(TAG, "set msgpackBytes: " + msgpackBytes.length);
+//            byte[] totalBytes = new byte[msgpackBytes.length + imageBytes.length + 1];
+//            totalBytes[0] = (byte) imageBytes.length;
+//            Log.d(TAG, "setting totalBytes: " + totalBytes.length);
+//            for (int i = 1; i < totalBytes.length; i++){
+//                totalBytes[i] = i < (imageBytes.length + 1) ? imageBytes[i - 1] : msgpackBytes[i - imageBytes.length - 1];
+//            }
 
             //set the language
             String lang = "en";
 
             byte[] langBytes = lang.getBytes("US-ASCII");
             int langLength = langBytes.length;
-            int textLength = totalBytes.length;
+            int textLength = msgpackBytes.length;
 
             //initialize byte array for the payload
             byte[] payload = new byte[1 + langLength + textLength];
@@ -139,7 +146,7 @@ public class Write {
 
             // copy langbytes and textbytes into payload
             System.arraycopy(langBytes, 0, payload, 1, langLength);
-            System.arraycopy(totalBytes, 0, payload, 1 + langLength, textLength);
+            System.arraycopy(msgpackBytes, 0, payload, 1 + langLength, textLength);
 
             Log.d(TAG, new String(payload));
 

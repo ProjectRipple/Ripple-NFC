@@ -9,7 +9,9 @@ import android.util.Log;
 
 import org.msgpack.MessagePack;
 import org.msgpack.template.Template;
+import org.msgpack.unpacker.Unpacker;
 
+import java.io.ByteArrayInputStream;
 import java.io.IOException;
 import java.io.UnsupportedEncodingException;
 import java.security.Key;
@@ -96,23 +98,23 @@ public class Read {
         if (data != null) {
             Log.d(TAG, "data length: " + data.length);
 
-            int drawLength = (int) data[0];
-            imageResult = new byte[drawLength];
-            Log.d(TAG, "drawLength: " + drawLength);
-            System.arraycopy(data, 1, imageResult, 0, drawLength);
-            Log.d(TAG, "imageResult set");
-
-            int stringsLength = data.length - drawLength - 1;
-            byte[] strings = new byte[stringsLength];
-            Log.d(TAG, "stringsLength: " + stringsLength);
-            System.arraycopy(data, drawLength + 1, strings, 0, stringsLength);
-            Log.d(TAG, "strings set");
+//            int drawLength = (int) data[0];
+//            imageResult = new byte[drawLength];
+//            Log.d(TAG, "drawLength: " + drawLength);
+//            System.arraycopy(data, 1, imageResult, 0, drawLength);
+//            Log.d(TAG, "imageResult set");
+//
+//            int stringsLength = data.length - drawLength - 1;
+//            byte[] strings = new byte[stringsLength];
+//            Log.d(TAG, "stringsLength: " + stringsLength);
+//            System.arraycopy(data, drawLength + 1, strings, 0, stringsLength);
+//            Log.d(TAG, "strings set");
             //create an ArrayList to store the bytes of the message
             ArrayList<Byte> resultBytes = new ArrayList<Byte>();
             try{
                 //decrypt the message into a byte array
                 cipher.init(Cipher.DECRYPT_MODE, aesKey);
-                byte[] decoded = cipher.doFinal(strings);
+                byte[] decoded = cipher.doFinal(data);
                 //store the byte array into the ArrayList
                 for(int i = 0; i < decoded.length; i ++)
                     resultBytes.add(i, decoded[i]);
@@ -126,9 +128,13 @@ public class Read {
             for(int i = 0; i < resultBytes.size(); i++)
                 decodedBytes[i] = resultBytes.get(i);
 
+            ByteArrayInputStream in = new ByteArrayInputStream(decodedBytes);
+            Unpacker unpacker = msgPack.createUnpacker(in);
+
             result = new HashMap<String, String>();
             try {
-                result = msgPack.read(decodedBytes, mapTemplate);
+                imageResult = unpacker.readByteArray();
+                result = unpacker.read(mapTemplate);
             } catch (IOException e) {
                 e.printStackTrace();
             }
