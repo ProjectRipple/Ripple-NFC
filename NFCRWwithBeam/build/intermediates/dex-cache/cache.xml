@@ -1,0 +1,23 @@
+<?xml version="1.0" encoding="utf-8"?>
+<pre-dex-items>
+
+    <item
+        dex="D:\Documents\GitHub\Ripple-NFC\NFCRWwithDrawing\app\build\intermediates\pre-dexed\debug\support-v4-19.1.0-a2a96d610a8661865224981b97f5717a312d937b.jar"
+        jar="D:\Documents\AndroidStudio\sdk\extras\android\m2repository\com\android\support\support-v4\19.1.0\support-v4-19.1.0.jar"
+        jumboMode="false"
+        revision="19.1.0"
+        sha1="85f201b380937e61a9dce6ca90ccf6872abbfb67"/>
+    <item
+        dex="D:\Documents\GitHub\Ripple-NFC\NFCRWwithDrawing\app\build\intermediates\pre-dexed\debug\classes-a540bbc4eccff65a5059185d00804db6a8c3ba1a.jar"
+        jar="D:\Documents\GitHub\Ripple-NFC\NFCRWwithDrawing\app\build\intermediates\exploded-aar\com.android.support\appcompat-v7\19.1.0\classes.jar"
+        jumboMode="false"
+        revision="19.1.0"
+        sha1="3499ceba05ca1f6037c6a2fad73df8f636224a28"/>
+    <item
+        dex="D:\Documents\GitHub\Ripple-NFC\NFCRWwithDrawing\app\build\intermediates\pre-dexed\debug\msgpack-0.6.12-SNAPSHOT-004915b8f11a0fc19bdc3ff1d4ab094924fbc719.jar"
+        jar="D:\Documents\GitHub\Ripple-NFC\NFCRWwithDrawing\app\libs\msgpack-0.6.12-SNAPSHOT.jar"
+        jumboMode="false"
+        revision="19.1.0"
+        sha1="4c55c66c6aa22ddc860f1de0022844c225551aae"/>
+
+</pre-dex-items>
