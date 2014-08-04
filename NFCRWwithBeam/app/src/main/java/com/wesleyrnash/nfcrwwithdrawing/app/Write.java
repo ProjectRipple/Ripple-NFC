@@ -103,6 +103,7 @@ public class Write {
 
     //turns a string of text into an NDEF formatted record
     private NdefRecord createRecord(byte[] input) throws UnsupportedEncodingException {
+
         NdefRecord ndefRecord = null;
 
         if (source == SOURCE_ADMIN){

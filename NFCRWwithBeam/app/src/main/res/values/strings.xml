@@ -1,7 +1,7 @@
 <?xml version="1.0" encoding="utf-8"?>
 <resources>
 
-    <string name="app_name">NFC RW with Drawing</string>
+    <string name="app_name">NFC RW with Beam</string>
     <string name="hello_world">Hello world!</string>
     <string name="action_settings">Settings</string>
     <string name="string_adminInstructions">Write tag ID then bring tag to device</string>
@@ -15,10 +15,13 @@
     <string name="title_activity_admin">AdminActivity</string>
     <string name="title_activity_triage">TriageActivity</string>
     <string name="title_beam_data">Beam Data</string>
+    <string name="title_beam_data2">Beam Data 2</string>
     <string name="title_tag_dispatch">Tag Dispatch</string>
     <string name="note_default_content">Put a message here, if you want.</string>
     <string name="note_network_name">Network Name</string>
     <string name="note_encryption_code">Encryption Code</string>
     <string name="note_pan_id">Pan ID</string>
     <string name="note_chan_freq">Channel Frequency</string>
+    <string name="note_message">Enter Your Message Here</string>
+    <string name="note_message_instruct">Enter Your Message Here, Separate messages with a semi-colon (";") </string>
 </resources>

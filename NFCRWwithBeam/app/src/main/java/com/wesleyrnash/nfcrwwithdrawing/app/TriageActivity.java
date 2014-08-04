@@ -45,11 +45,13 @@ public class TriageActivity extends Activity implements View.OnTouchListener {
 
     Context ctx;
 
+    //Initializing the TextView fields for last, first, and tag ID
     TextView lastName;
     TextView firstName;
     TextView tagId;
 
     //table 1 setup
+    //requires setting up the layout and the TextViews
     TableLayout table1;
     TableRow table1Row1;
     TextView table1Row1Time;
@@ -58,6 +60,8 @@ public class TriageActivity extends Activity implements View.OnTouchListener {
     TextView table1Row1Respiration;
 
     //table 2 setup
+    //Pretty much the same as the above table but has an AutoComplete
+    //TextView for the drug database
     TableLayout table2;
     TableRow table2Row1;
     TextView table2Row1Time;
@@ -66,15 +70,18 @@ public class TriageActivity extends Activity implements View.OnTouchListener {
     TextView table2Row1Other;
 
     //ArrayLists to contain all the TextViews and their corresponding headers
+    //Filled in later by the TextViews
     ArrayList<TextView> textViews;
     ArrayList<String> headers;
 
+    //Declared for debugging purposes
     public static final String TAG = "NFCRW";
 
     //button to toggle between reading and writing
     Button toggleMode;
 
     //set up drawing stuff
+    //Button that clears the drawing
     Button clearButton;
     ImageView imageView;
     Bitmap bitmap;
@@ -82,21 +89,26 @@ public class TriageActivity extends Activity implements View.OnTouchListener {
     private Paint mPaint;
     private DrawingHandler drawingHandler;
 
+    //Initialize the message pack for actually sending the messages
     MessagePack msgPack;
+    //Initializes the map that will be used to find the values
     Map<String, String> map;
 
+    //Initialized for the autocomplete field
     ArrayAdapter<String> stringAdapter;
 
+    //Setting up the NfcAdapter
     NfcAdapter adapter;
     PendingIntent pendingIntent;
     IntentFilter writeTagFilters[];
     Tag mytag;
 
 
-
+    //The method that runs when the activity is started
     @Override
     protected void onCreate(Bundle savedInstanceState) {
         super.onCreate(savedInstanceState);
+        //Sets the layout based on the XML file ID
         setContentView(R.layout.activity_triage);
 
         ctx=this;
@@ -186,10 +198,13 @@ public class TriageActivity extends Activity implements View.OnTouchListener {
             }
         });
 
+        //Sets up a click listener that clears the screen of the drawing
         clearButton.setOnClickListener(new View.OnClickListener() {
             @Override
             public void onClick(View view) {
+                //Actually calling screen clearing method
                 clearScreen();
+                //Resets the textViews as well to be nothing
                 for(TextView tv : textViews)
                     tv.setText("");
             }
@@ -245,8 +260,9 @@ public class TriageActivity extends Activity implements View.OnTouchListener {
         return true;
     }
 
+    //function for putting the desired drawing on the canvas
     private void updateCanvas() {
-
+        //Loops through each path and draws for each path
         for (Path p : drawingHandler.getPathList()){
             mCanvas.drawPath(p, mPaint);
         }

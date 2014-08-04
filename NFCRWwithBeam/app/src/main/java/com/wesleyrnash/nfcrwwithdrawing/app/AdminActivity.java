@@ -33,6 +33,7 @@ public class AdminActivity extends Activity {
 
     //define a tag for debugging
     public static final String TAG = "NFCRW";
+    //Set the string for the password
     public static final String PASSWORD = "Ripple";
 
     NfcAdapter adapter;

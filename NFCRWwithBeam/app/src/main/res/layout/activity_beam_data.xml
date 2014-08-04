@@ -1,81 +1,82 @@
 <?xml version="1.0" encoding="utf-8"?>
 
 <LinearLayout xmlns:android="http://schemas.android.com/apk/res/android"
-    android:orientation="vertical"
-    android:layout_width="fill_parent"
-    android:layout_height="fill_parent"
+android:orientation="vertical"
+android:layout_width="fill_parent"
+android:layout_height="fill_parent"
     >
 
-    <TextView android:id="@+id/tv"
-        android:layout_width="match_parent"
-        android:layout_height="100dp"
-        android:gravity="center_vertical"
-        android:textAppearance="?android:attr/textAppearanceMedium"
-        />
-    <TextView
-        android:layout_width="match_parent"
-        android:layout_height="25dp"
-        android:text="@string/note_network_name"/>
-    <EditText
-        android:id="@+id/note"
-        android:layout_width="match_parent"
-        android:layout_height="50dp"
-        android:ems="10"
-        android:gravity="top"
-        android:text="@string/note_network_name"
-        android:hint="@string/note_network_name"
-        android:inputType="textMultiLine" >
+<TextView android:id="@+id/tv"
+    android:layout_width="match_parent"
+    android:layout_height="50dp"
+    android:gravity="center_vertical"
+    android:textAppearance="?android:attr/textAppearanceMedium"
+    />
+<TextView
+    android:layout_width="match_parent"
+    android:layout_height="25dp"
+    android:text="@string/note_network_name"/>
+<EditText
+    android:id="@+id/note"
+    android:layout_width="match_parent"
+    android:layout_height="50dp"
+    android:ems="10"
+    android:gravity="top"
+    android:text="@string/note_network_name"
+    android:hint="@string/note_network_name"
+    android:inputType="textMultiLine" >
 
-        <requestFocus />
-    </EditText>
-    <TextView
-        android:layout_width="match_parent"
-        android:layout_height="25dp"
-        android:text="@string/note_pan_id"/>
-    <EditText
-        android:id="@+id/note2"
-        android:layout_width="match_parent"
-        android:layout_height="50dp"
-        android:ems="10"
-        android:gravity="top"
-        android:text="@string/note_pan_id"
-        android:hint="@string/note_pan_id"
-        android:inputType="textMultiLine" >
+    <requestFocus />
+</EditText>
+<TextView
+    android:layout_width="match_parent"
+    android:layout_height="25dp"
+    android:text="@string/note_pan_id"/>
+<EditText
+    android:id="@+id/note2"
+    android:layout_width="match_parent"
+    android:layout_height="50dp"
+    android:ems="10"
+    android:gravity="top"
+    android:text="@string/note_pan_id"
+    android:hint="@string/note_pan_id"
+    android:inputType="textMultiLine" >
 
-        <requestFocus />
-    </EditText>
-    <TextView
-        android:layout_width="match_parent"
-        android:layout_height="25dp"
-        android:text="@string/note_encryption_code"/>
-    <EditText
-        android:id="@+id/note3"
-        android:layout_width="match_parent"
-        android:layout_height="50dp"
-        android:ems="10"
-        android:gravity="top"
-        android:text="@string/note_encryption_code"
-        android:hint="@string/note_encryption_code"
-        android:inputType="textMultiLine" >
+    <requestFocus />
+</EditText>
+<TextView
+    android:layout_width="match_parent"
+    android:layout_height="25dp"
+    android:text="@string/note_encryption_code"/>
+<EditText
+    android:id="@+id/note3"
+    android:layout_width="match_parent"
+    android:layout_height="50dp"
+    android:ems="10"
+    android:gravity="top"
+    android:text="@string/note_encryption_code"
+    android:hint="@string/note_encryption_code"
+    android:inputType="textMultiLine" >
 
-        <requestFocus />
-    </EditText>
-    <TextView
-        android:layout_width="match_parent"
-        android:layout_height="25dp"
-        android:text="@string/note_chan_freq"/>
-    <EditText
-        android:id="@+id/note4"
-        android:layout_width="match_parent"
-        android:layout_height="50dp"
-        android:ems="10"
-        android:gravity="top"
-        android:text="@string/note_chan_freq"
-        android:hint="@string/note_chan_freq"
-        android:inputType="textMultiLine" >
+    <requestFocus />
+</EditText>
+<TextView
+    android:layout_width="match_parent"
+    android:layout_height="25dp"
+    android:text="@string/note_chan_freq"/>
+<EditText
+    android:id="@+id/note4"
+    android:layout_width="match_parent"
+    android:layout_height="50dp"
+    android:ems="10"
+    android:gravity="top"
+    android:text="@string/note_chan_freq"
+    android:hint="@string/note_chan_freq"
+    android:inputType="textMultiLine" >
 
-        <requestFocus />
-    </EditText>
+    <requestFocus />
+</EditText>
 
 </LinearLayout>
+
 
