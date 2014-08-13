@@ -19,7 +19,6 @@ public class MainActivity extends Activity {
     Button adminButton;
     Button beamDataButton;
     Button beamData2Button;
-    Button tagDispatchButton;
 
     //Initialize context
     Context ctx;
@@ -39,9 +38,7 @@ public class MainActivity extends Activity {
         //in the activity_main.xml file
         triageButton = (Button) findViewById(R.id.button_triageMode);
         adminButton = (Button) findViewById(R.id.button_adminMode);
-        tagDispatchButton = (Button) findViewById(R.id.button_tag_dispatch);
         beamDataButton = (Button) findViewById(R.id.button_beam_data);
-        beamData2Button = (Button) findViewById(R.id.button_beam_data2);
 
         //Creates a click listener that when pressed starts the triage activity class
         triageButton.setOnClickListener(new View.OnClickListener() {
@@ -63,13 +60,7 @@ public class MainActivity extends Activity {
                 startActivity(intent);
             }
         });
-        tagDispatchButton.setOnClickListener(new View.OnClickListener() {
-            @Override
-            public void onClick(View view) {
-                Intent intent = new Intent(ctx, TagDispatch.class);
-                startActivity(intent);
-            }
-        });
+
         beamDataButton.setOnClickListener(new View.OnClickListener() {
             @Override
             public void onClick(View view) {
@@ -77,13 +68,7 @@ public class MainActivity extends Activity {
                 startActivity(intent);
             }
         });
-        beamData2Button.setOnClickListener(new View.OnClickListener() {
-            @Override
-            public void onClick(View view) {
-                Intent intent = new Intent(ctx, BeamData.class);
-                startActivity(intent);
-            }
-        });
+
     }
 
     @Override

@@ -48,13 +48,6 @@
                 android:value="com.wesleyrnash.nfcrwwithdrawing.app.MainActivity" />
         </activity>
 
-        <activity
-            android:name=".BeamData"
-            android:label="@string/title_beam_data2" >
-            <meta-data
-                android:name="android.support.PARENT_ACTIVITY"
-                android:value="com.wesleyrnash.nfcrwwithdrawing.app.MainActivity" />
-        </activity>
 
         <activity
             android:name="com.wesleyrnash.nfcrwwithdrawing.app.TagDispatch"
