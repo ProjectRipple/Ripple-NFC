@@ -61,8 +61,9 @@ public class LedBeamData extends Activity implements CreateNdefMessageCallback {
         //Store the characters in the string in a byte array
         //stored as HEX values
         message = net_name.getText().toString();
-
-        byte[] textBytes = message.getBytes();
+        int messageInt = Integer.parseInt(message);
+        byte[] textBytes = new byte[1];
+        textBytes[0] = (byte) (messageInt-127);
 
         //Creating the actual record by defining the type of record,
         //the type of text for the record, and the actual byte array

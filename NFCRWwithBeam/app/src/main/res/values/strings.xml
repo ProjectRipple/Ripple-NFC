@@ -25,5 +25,5 @@
     <string name="note_message">Enter Your Message Here</string>
     <string name="note_message_instruct">Enter Your Message Here, Separate messages with a semi-colon (";") </string>
     <string name="note_led_power">Power Level</string>
-    <string name="note_led_brightness">Brightness (Values of 0-255)</string>
+    <string name="note_led_brightness">Brightness (Values of 0000-255, must use three characters)</string>
 </resources>
