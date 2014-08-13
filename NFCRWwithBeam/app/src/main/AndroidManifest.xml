@@ -48,14 +48,14 @@
                 android:value="com.wesleyrnash.nfcrwwithdrawing.app.MainActivity" />
         </activity>
 
-
         <activity
-            android:name="com.wesleyrnash.nfcrwwithdrawing.app.TagDispatch"
-            android:label="@string/title_tag_dispatch" >
+            android:name="com.wesleyrnash.nfcrwwithdrawing.app.LedBeamData"
+            android:label="@string/title_led_beam_data" >
             <meta-data
                 android:name="android.support.PARENT_ACTIVITY"
                 android:value="com.wesleyrnash.nfcrwwithdrawing.app.MainActivity" />
         </activity>
+
 
 
     </application>

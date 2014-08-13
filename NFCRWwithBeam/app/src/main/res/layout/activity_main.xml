@@ -35,7 +35,13 @@
             android:textSize="50sp"
             android:id="@+id/button_beam_data"
             android:layout_marginTop="25dp" />
-
+        <Button
+            android:layout_width="match_parent"
+            android:layout_height="100dp"
+            android:text="LED Beam Data"
+            android:textSize="50sp"
+            android:id="@+id/button_led_beam_data"
+            android:layout_marginTop="25dp" />
 
     </LinearLayout>
 

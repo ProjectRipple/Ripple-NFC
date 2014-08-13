@@ -18,7 +18,7 @@ public class MainActivity extends Activity {
     Button triageButton;
     Button adminButton;
     Button beamDataButton;
-    Button beamData2Button;
+    Button ledBeamDataButton;
 
     //Initialize context
     Context ctx;
@@ -39,6 +39,7 @@ public class MainActivity extends Activity {
         triageButton = (Button) findViewById(R.id.button_triageMode);
         adminButton = (Button) findViewById(R.id.button_adminMode);
         beamDataButton = (Button) findViewById(R.id.button_beam_data);
+        ledBeamDataButton = (Button) findViewById(R.id.button_led_beam_data);
 
         //Creates a click listener that when pressed starts the triage activity class
         triageButton.setOnClickListener(new View.OnClickListener() {
@@ -68,7 +69,13 @@ public class MainActivity extends Activity {
                 startActivity(intent);
             }
         });
-
+        ledBeamDataButton.setOnClickListener(new View.OnClickListener() {
+            @Override
+            public void onClick(View view) {
+                Intent intent = new Intent(ctx, LedBeamData.class);
+                startActivity(intent);
+            }
+        });
     }
 
     @Override

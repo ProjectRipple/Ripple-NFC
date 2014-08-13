@@ -15,7 +15,7 @@
     <string name="title_activity_admin">AdminActivity</string>
     <string name="title_activity_triage">TriageActivity</string>
     <string name="title_beam_data">Beam Data</string>
-    <string name="title_beam_data2">Beam Data 2</string>
+    <string name="title_led_beam_data">Led Beam Data</string>
     <string name="title_tag_dispatch">Tag Dispatch</string>
     <string name="note_default_content">Put a message here, if you want.</string>
     <string name="note_network_name">Network Name</string>
@@ -24,4 +24,6 @@
     <string name="note_chan_freq">Channel Frequency</string>
     <string name="note_message">Enter Your Message Here</string>
     <string name="note_message_instruct">Enter Your Message Here, Separate messages with a semi-colon (";") </string>
+    <string name="note_led_power">Power Level</string>
+    <string name="note_led_brightness">Brightness (Values of 0-255)</string>
 </resources>
