@@ -1,0 +1,31 @@
+<FrameLayout xmlns:android="http://schemas.android.com/apk/res/android"
+    xmlns:tools="http://schemas.android.com/tools"
+    android:layout_width="match_parent"
+    android:layout_height="match_parent"
+    tools:context="com.wesleyrnash.nfcrwwithdrawing.app.MainActivity">
+
+    <LinearLayout
+        android:layout_width="match_parent"
+        android:layout_height="wrap_content"
+        android:orientation="vertical">
+
+        <Button
+            android:layout_width="match_parent"
+            android:layout_height="200dp"
+            android:text="Triage Mode"
+            android:textSize="50sp"
+            android:id="@+id/button_triageMode"
+            android:layout_marginTop="25dp" />
+
+        <Button
+            android:layout_width="match_parent"
+            android:layout_height="200dp"
+            android:text="Admin Mode"
+            android:textSize="50sp"
+            android:id="@+id/button_adminMode"
+            android:layout_marginTop="50dp" />
+
+    </LinearLayout>
+
+</FrameLayout>
+<!-- From: file:/C:/Users/Wesley/Ripple-NFC/NFCRWwithDrawing/app/src/main/res/layout/activity_main.xml -->

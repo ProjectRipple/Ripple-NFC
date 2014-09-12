@@ -1,0 +1,24 @@
+<!-- From: file:/C:/Users/Wesley/Ripple-NFC/NFCRWwithDrawing/app/src/main/AndroidManifest.xml --><manifest xmlns:android="http://schemas.android.com/apk/res/android" android:versionCode="1" android:versionName="1.0" package="com.wesleyrnash.nfcrwwithdrawing.app">
+    <uses-sdk android:minSdkVersion="11" android:targetSdkVersion="19"/>
+
+    <uses-permission android:name="android.permission.NFC"/>
+
+    <uses-feature android:name="android.hardware.nfc" android:required="true"/>
+
+    <application android:allowBackup="true" android:icon="@drawable/ic_launcher" android:label="@string/app_name" android:theme="@style/AppTheme">
+        <activity android:label="@string/app_name" android:name="com.wesleyrnash.nfcrwwithdrawing.app.MainActivity">
+            <intent-filter>
+                <action android:name="android.intent.action.MAIN"/>
+
+                <category android:name="android.intent.category.LAUNCHER"/>
+            </intent-filter>
+        </activity>
+        <activity android:label="@string/title_activity_triage" android:name="com.wesleyrnash.nfcrwwithdrawing.app.TriageActivity">
+            <meta-data android:name="android.support.PARENT_ACTIVITY" android:value="com.wesleyrnash.nfcrwwithdrawing.app.MainActivity"/>
+        </activity>
+        <activity android:label="@string/title_activity_admin" android:name="com.wesleyrnash.nfcrwwithdrawing.app.AdminActivity">
+            <meta-data android:name="android.support.PARENT_ACTIVITY" android:value="com.wesleyrnash.nfcrwwithdrawing.app.MainActivity"/>
+        </activity>
+    </application>
+
+</manifest>

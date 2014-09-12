@@ -1,0 +1,18 @@
+<?xml version="1.0" encoding="utf-8"?>
+<merger>
+
+    <dataSet config="19.1.0" >
+        <source path="C:\Users\Wesley\Ripple-NFC\NFCRWwithDrawing\app\build\exploded-aar\com.android.support\appcompat-v7\19.1.0\assets" />
+    </dataSet>
+    <dataSet config="main" >
+        <source path="C:\Users\Wesley\Ripple-NFC\NFCRWwithDrawing\app\src\main\assets" >
+            <file
+                name="medicine_V1.db"
+                path="C:\Users\Wesley\Ripple-NFC\NFCRWwithDrawing\app\src\main\assets\medicine_V1.db" />
+        </source>
+    </dataSet>
+    <dataSet config="debug" >
+        <source path="C:\Users\Wesley\Ripple-NFC\NFCRWwithDrawing\app\src\debug\assets" />
+    </dataSet>
+
+</merger>
